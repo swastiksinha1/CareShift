@@ -6,6 +6,7 @@
     --white: #ffffff;
     --card-bg: #ffffff;
     --border-color: rgba(0, 0, 0, 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.7);
 }
 
 :root.dark-mode {
@@ -13,9 +14,10 @@
     --text-color: #f8fafc;
     --accent-color: #3b82f6;
     --accent-dark: #60a5fa;
-    --white: #1e293b;
+    --white: #ffffff;
     --card-bg: #1e293b;
     --border-color: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(30, 41, 59, 0.7);
 }
 
 * {
