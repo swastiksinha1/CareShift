@@ -36,12 +36,6 @@ const mat2 = new THREE.MeshPhysicalMaterial({ color: 0x0ea5e9, metalness: 0.1, r
 const radius = 0.8;
 const height = 1.6;
 
-// Glowing Core (Inner Heart)
-const coreGeo = new THREE.SphereGeometry(radius * 0.6, 32, 32);
-const coreMat = new THREE.MeshBasicMaterial({ color: 0xff4757, transparent: true, opacity: 0 }); // Hidden initially
-const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-capsuleGroup.add(coreMesh);
-
 // Top half
 const topGeo = new THREE.CylinderGeometry(radius, radius, height/2, 32);
 topGeo.translate(0, height/4, 0);
@@ -73,15 +67,16 @@ capsuleGroup.rotation.x = Math.PI / 6;
 
 // Floating animation
 let clock = new THREE.Clock();
+let isJourneyStarting = false;
+
 function animate() {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
-    capsuleGroup.position.y += Math.sin(t * 2) * 0.005;
-    capsuleGroup.rotation.y += 0.005;
     
-    // Pulse core
-    const scale = 1 + Math.sin(t * 5) * 0.05;
-    coreMesh.scale.set(scale, scale, scale);
+    if (!isJourneyStarting) {
+        capsuleGroup.position.y += Math.sin(t * 2) * 0.005;
+        capsuleGroup.rotation.y += 0.005;
+    }
     
     renderer.render(scene, camera);
 }
@@ -106,18 +101,12 @@ let tl = gsap.timeline({
 tl.to(capsuleGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: window.innerWidth < 768 ? 2 : 0, ease: "power1.inOut" }, 0);
 tl.to(capsuleGroup.rotation, { x: Math.PI * 2, z: -Math.PI / 4, ease: "power1.inOut" }, 0);
 
-// Break capsule apart
-tl.to(topPart.position, { y: 2, ease: "power1.inOut" }, 0.3);
-tl.to(bottomPart.position, { y: -2, ease: "power1.inOut" }, 0.3);
+tl.to(topPart.position, { y: 0.5, ease: "power1.inOut" }, 0.3);
+tl.to(bottomPart.position, { y: -0.5, ease: "power1.inOut" }, 0.3);
 
-// Reveal Core
-tl.to(coreMat, { opacity: 1, ease: "power1.inOut" }, 0.3);
-
-// Bring back together and move to center
 tl.to(capsuleGroup.position, { x: 0, y: 0, z: -2, ease: "power1.inOut" }, 0.6);
 tl.to(topPart.position, { y: 0, ease: "power1.inOut" }, 0.6);
 tl.to(bottomPart.position, { y: 0, ease: "power1.inOut" }, 0.6);
-tl.to(coreMat, { opacity: 0, ease: "power1.inOut" }, 0.6);
 tl.to(capsuleGroup.rotation, { x: Math.PI / 2, y: Math.PI * 2, z: 0, ease: "power1.inOut" }, 0.6);
 
 // HTML Elements
@@ -132,59 +121,40 @@ gsap.utils.toArray('.slide-up').forEach((elem) => {
     });
 });
 
-// --- Interactive Logic ---
-// Barrier Cards
-window.toggleBarrier = function(card) {
-    card.classList.toggle('flipped');
-};
-
-// CareBot
-const chatBody = document.getElementById('chat-body');
-const chatInput = document.getElementById('chat-input');
-
-window.handleKeyPress = function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-};
-
-window.sendReply = function(text) {
-    chatInput.value = text;
-    sendMessage();
-};
-
-window.sendMessage = function() {
-    const text = chatInput.value.trim();
-    if (!text) return;
-
-    // Add user message
-    const userMsg = document.createElement('div');
-    userMsg.className = 'message user-message';
-    userMsg.innerHTML = `
-        <div class="avatar">You</div>
-        <div class="msg-content"><p>${text}</p></div>
-    `;
-    chatBody.appendChild(userMsg);
-    chatInput.value = '';
+// --- Journey Transition ---
+window.startJourney = function(e) {
+    if(e) e.preventDefault();
+    isJourneyStarting = true;
     
-    // Remove quick replies from DOM
-    const quickReplies = document.querySelector('.quick-replies');
-    if(quickReplies) quickReplies.remove();
+    // Stop scroll interactions
+    document.body.style.overflow = 'hidden';
+    
+    const transitionTl = gsap.timeline({
+        onComplete: () => {
+            window.location.href = 'journey.html';
+        }
+    });
 
-    chatBody.scrollTop = chatBody.scrollHeight;
+    // Animate pill flying into camera
+    transitionTl.to(capsuleGroup.position, {
+        z: camera.position.z - 0.5,
+        x: 0,
+        y: 0,
+        duration: 1.5,
+        ease: "power2.in"
+    }, 0);
+    
+    transitionTl.to(capsuleGroup.rotation, {
+        x: Math.PI * 4,
+        y: Math.PI * 4,
+        duration: 1.5,
+        ease: "power2.in"
+    }, 0);
 
-    // Simulate bot response
-    setTimeout(() => {
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot-message';
-        
-        let responseText = "I understand. Taking the first step can feel overwhelming. You're in a safe space here. Would you like to try our anonymous symptom checker or just keep talking?";
-        
-        botMsg.innerHTML = `
-            <div class="avatar">CB</div>
-            <div class="msg-content"><p>${responseText}</p></div>
-        `;
-        chatBody.appendChild(botMsg);
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }, 1000);
+    // Fade screen to white
+    transitionTl.to("#whiteout", {
+        opacity: 1,
+        duration: 0.5,
+        ease: "power1.in"
+    }, 1.0);
 };

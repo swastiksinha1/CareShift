@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareShift - The Journey</title>
+    <link rel="stylesheet" href="journey.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="slides-container">
+        
+        <!-- Slide 1: Barriers -->
+        <div class="slide slide-barriers active" id="slide-1">
+            <div class="slide-content">
+                <h2>What's stopping you today?</h2>
+                <p>Click on what you're feeling. It's safe to be honest here.</p>
+                
+                <div class="barriers-grid">
+                    <div class="barrier-card" onclick="toggleBarrier(this)">
+                        <div class="barrier-inner">
+                            <div class="barrier-front">
+                                <span class="icon">😰</span>
+                                <h3>Fear of Diagnosis</h3>
+                            </div>
+                            <div class="barrier-back">
+                                <p>Knowing early gives you 90% more control. Ignorance doesn't cure.</p>
+                                <button class="btn-small" onclick="nextSlide(event)">Let's Talk</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barrier-card" onclick="toggleBarrier(this)">
+                        <div class="barrier-inner">
+                            <div class="barrier-front">
+                                <span class="icon">👁️</span>
+                                <h3>Social Stigma</h3>
+                            </div>
+                            <div class="barrier-back">
+                                <p>Your health is yours alone. Our anonymous clinics ensure privacy.</p>
+                                <button class="btn-small" onclick="nextSlide(event)">Get Anonymous Help</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barrier-card" onclick="toggleBarrier(this)">
+                        <div class="barrier-inner">
+                            <div class="barrier-front">
+                                <span class="icon">💰</span>
+                                <h3>Cost Concerns</h3>
+                            </div>
+                            <div class="barrier-back">
+                                <p>You might be fully covered under Ayushman Bharat.</p>
+                                <button class="btn-small" onclick="nextSlide(event)">Check Eligibility</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-nav">
+                <button onclick="nextSlide()" class="btn-nav">Next &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Slide 2: Stories -->
+        <div class="slide slide-stories" id="slide-2">
+            <div class="slide-content">
+                <h2>You are not the first.</h2>
+                <p>Real stories from people who were exactly where you are right now.</p>
+                
+                <div class="stories-container">
+                    <div class="story-card">
+                        <p class="quote">"I ignored the lump because I was terrified. CareShift showed me that early stage is highly treatable. I went. It was. I'm okay now."</p>
+                        <span class="author">- Priya, 34</span>
+                    </div>
+                    <div class="story-card">
+                        <p class="quote">"As a father, I thought working through the chest pain was being a provider. CareBot asked me: 'Who provides if you're gone?' That woke me up."</p>
+                        <span class="author">- Ramesh, 45</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-nav">
+                <button onclick="prevSlide()" class="btn-nav ghost">&larr; Back</button>
+                <button onclick="nextSlide()" class="btn-nav">Talk to CareBot &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Slide 3: CareBot -->
+        <div class="slide slide-carebot" id="slide-3">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="status-indicator"></div>
+                    <div>
+                        <h3>CareBot Companion</h3>
+                        <span class="subtitle">Anonymous & Confidential</span>
+                    </div>
+                    <a href="index.html" class="btn-exit">Exit</a>
+                </div>
+                <div class="chat-body" id="chat-body">
+                    <div class="message bot-message">
+                        <div class="avatar">CB</div>
+                        <div class="msg-content">
+                            <p>Hi there. I know taking the first step is hard. What's on your mind today? You don't have to share your name.</p>
+                            <div class="quick-replies">
+                                <button onclick="sendReply('I have a symptom I\'m ignoring.')">I have a symptom I'm ignoring.</button>
+                                <button onclick="sendReply('I\'m worried about the cost.')">I'm worried about the cost.</button>
+                                <button onclick="sendReply('I just feel anxious.')">I just feel anxious.</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()" class="btn-send">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="journey.js"></script>
+</body>
+</html>
