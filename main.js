@@ -42,8 +42,11 @@ scene.add(backLight);
 const capsuleGroup = new THREE.Group();
 scene.add(capsuleGroup);
 
-const mat1 = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.2, clearcoat: 1.0 });
-const mat2 = new THREE.MeshPhysicalMaterial({ color: 0x0ea5e9, metalness: 0.1, roughness: 0.2, clearcoat: 1.0 });
+const floatGroup = new THREE.Group();
+capsuleGroup.add(floatGroup);
+
+const mat1 = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.2, clearcoat: 1.0, side: THREE.DoubleSide });
+const mat2 = new THREE.MeshPhysicalMaterial({ color: 0x0ea5e9, metalness: 0.1, roughness: 0.2, clearcoat: 1.0, side: THREE.DoubleSide });
 
 const radius = 0.8;
 const height = 1.6;
@@ -70,8 +73,8 @@ const bottomPart = new THREE.Group();
 bottomPart.add(bottomMesh);
 bottomPart.add(bottomDomeMesh);
 
-capsuleGroup.add(topPart);
-capsuleGroup.add(bottomPart);
+floatGroup.add(topPart);
+floatGroup.add(bottomPart);
 
 const parentGroup = new THREE.Group();
 scene.add(parentGroup);
@@ -100,8 +103,8 @@ function animate() {
     const t = clock.getElapsedTime();
     
     if (!isJourneyStarting) {
-        // Continuous float & spin
-        capsuleGroup.position.y = Math.sin(t * 2) * 0.1;
+        // Continuous float & spin isolated from GSAP position
+        floatGroup.position.y = Math.sin(t * 2) * 0.1;
         capsuleGroup.rotation.y += 0.005;
         
         // Mouse Parallax applied to parent to avoid fighting ScrollTrigger
@@ -199,11 +202,11 @@ window.startJourney = function(e) {
         ease: "power2.inOut"
     }, 0);
 
-    // Scale massively to swallow the entire screen
+    // Scale massively to swallow the entire screen without the camera clipping inside
     transitionTl.to(capsuleGroup.scale, {
-        x: 30,
-        y: 30,
-        z: 30,
+        x: 4,
+        y: 4,
+        z: 4,
         duration: 1.5,
         ease: "power3.in"
     }, 0);
