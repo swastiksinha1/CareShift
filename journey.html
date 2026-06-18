@@ -9,6 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="theme.js"></script>
     <style>
+        /* Prevent white flash during load */
+        html { background-color: #f8fafc; }
+        html.dark-mode { background-color: #050505; }
+        body { margin: 0; padding: 0; }
+        
         /* Custom Saathi Content Styles applied to Journey */
         .chips { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:24px; justify-content:center; }
         .chip {
