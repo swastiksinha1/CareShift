@@ -170,8 +170,11 @@ window.startJourney = function(e) {
     if(e) e.preventDefault();
     isJourneyStarting = true;
     
-    // Stop scroll interactions and kill scroll trigger to prevent fighting
+    // Stop scroll interactions and kill all scroll triggers to absolutely prevent fighting
     document.body.style.overflow = 'hidden';
+    if (window.ScrollTrigger) {
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    }
     if (tl) tl.kill();
     
     const transitionTl = gsap.timeline({
@@ -183,19 +186,23 @@ window.startJourney = function(e) {
     // Fade out HTML content immediately
     transitionTl.to('main', { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 0);
 
+    // Close the pill in case it's broken apart
+    transitionTl.to(topPart.position, { y: 0, duration: 0.5, ease: "power2.inOut" }, 0);
+    transitionTl.to(bottomPart.position, { y: 0, duration: 0.5, ease: "power2.inOut" }, 0);
+
     // Animate pill popping into center
     transitionTl.to(capsuleGroup.position, {
         x: 0,
         y: 0,
-        z: 6, // Pop towards camera
+        z: 5, // Safely pop towards camera without clipping near plane
         duration: 1.2,
-        ease: "back.out(1.2)"
+        ease: "back.out(1.5)"
     }, 0);
     
-    // Spin rapidly
+    // Spin rapidly using relative rotation
     transitionTl.to(capsuleGroup.rotation, {
-        x: Math.PI * 2,
-        y: Math.PI * 4,
+        x: "+=6.28", // Full 360 relative
+        y: "+=12.56", // Full 720 relative
         z: 0,
         duration: 1.2,
         ease: "power3.inOut"
