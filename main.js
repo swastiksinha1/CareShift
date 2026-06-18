@@ -38,60 +38,55 @@ const backLight = new THREE.DirectionalLight(0x0ea5e9, 0.5);
 backLight.position.set(-5, -5, -5);
 scene.add(backLight);
 
-// Create Medicine Capsule
-const capsuleGroup = new THREE.Group();
-scene.add(capsuleGroup);
+// --- Scene Hierarchy ---
+// parentGroup: mouse parallax
+// └── scrollGroup: GSAP scroll animations (position, rotation)
+//     └── topPart / bottomPart: break-apart animation
+//         (floating handled via sin in render loop on scrollGroup.position.y OFFSET only)
+const parentGroup = new THREE.Group();
+scene.add(parentGroup);
 
-const floatGroup = new THREE.Group();
-capsuleGroup.add(floatGroup);
+const scrollGroup = new THREE.Group();
+parentGroup.add(scrollGroup);
 
+// Capsule geometry
 const mat1 = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.2, clearcoat: 1.0, side: THREE.DoubleSide });
-const mat2 = new THREE.MeshPhysicalMaterial({ color: 0x0ea5e9, metalness: 0.1, roughness: 0.2, clearcoat: 1.0, side: THREE.DoubleSide });
+const mat2 = new THREE.MeshPhysicalMaterial({ color: 0x0ea5e9,  metalness: 0.1, roughness: 0.2, clearcoat: 1.0, side: THREE.DoubleSide });
 
 const radius = 0.8;
 const height = 1.6;
 
 // Top half
-const topGeo = new THREE.CylinderGeometry(radius, radius, height/2, 32);
-topGeo.translate(0, height/4, 0);
+const topGeo = new THREE.CylinderGeometry(radius, radius, height / 2, 32);
+topGeo.translate(0, height / 4, 0);
 const topMesh = new THREE.Mesh(topGeo, mat2);
 const topDomeGeo = new THREE.SphereGeometry(radius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-topDomeGeo.translate(0, height/2, 0);
+topDomeGeo.translate(0, height / 2, 0);
 const topDomeMesh = new THREE.Mesh(topDomeGeo, mat2);
 const topPart = new THREE.Group();
-topPart.add(topMesh);
-topPart.add(topDomeMesh);
+topPart.add(topMesh, topDomeMesh);
 
 // Bottom half
-const bottomGeo = new THREE.CylinderGeometry(radius, radius, height/2, 32);
-bottomGeo.translate(0, -height/4, 0);
+const bottomGeo = new THREE.CylinderGeometry(radius, radius, height / 2, 32);
+bottomGeo.translate(0, -height / 4, 0);
 const bottomMesh = new THREE.Mesh(bottomGeo, mat1);
 const bottomDomeGeo = new THREE.SphereGeometry(radius, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
-bottomDomeGeo.translate(0, -height/2, 0);
+bottomDomeGeo.translate(0, -height / 2, 0);
 const bottomDomeMesh = new THREE.Mesh(bottomDomeGeo, mat1);
 const bottomPart = new THREE.Group();
-bottomPart.add(bottomMesh);
-bottomPart.add(bottomDomeMesh);
+bottomPart.add(bottomMesh, bottomDomeMesh);
 
-floatGroup.add(topPart);
-floatGroup.add(bottomPart);
+scrollGroup.add(topPart, bottomPart);
 
-const parentGroup = new THREE.Group();
-scene.add(parentGroup);
-parentGroup.add(capsuleGroup);
+// Initial placement
+scrollGroup.position.set(2, 0, 0);
+scrollGroup.rotation.z = Math.PI / 4;
+scrollGroup.rotation.x = Math.PI / 6;
 
-capsuleGroup.position.set(2, 0, 0);
-capsuleGroup.rotation.z = Math.PI / 4;
-capsuleGroup.rotation.x = Math.PI / 6;
-
-// Floating animation
-let clock = new THREE.Clock();
+// --- Render Loop ---
+const clock = new THREE.Clock();
 let isJourneyStarting = false;
-
-let mouseX = 0;
-let mouseY = 0;
-let targetX = 0;
-let targetY = 0;
+let mouseX = 0, mouseY = 0;
 
 window.addEventListener('mousemove', (e) => {
     mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
@@ -100,20 +95,15 @@ window.addEventListener('mousemove', (e) => {
 
 function animate() {
     requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
-    
     if (!isJourneyStarting) {
-        // Continuous float & spin isolated from GSAP position
-        floatGroup.position.y = Math.sin(t * 2) * 0.1;
-        capsuleGroup.rotation.y += 0.005;
-        
-        // Mouse Parallax applied to parent to avoid fighting ScrollTrigger
-        targetX = mouseX;
-        targetY = mouseY;
-        parentGroup.rotation.y += (targetX - parentGroup.rotation.y) * 0.05;
-        parentGroup.rotation.x += (targetY - parentGroup.rotation.x) * 0.05;
+        const t = clock.getElapsedTime();
+        // Floating offset on y — doesn't conflict with GSAP because GSAP animates scrollGroup.position
+        // and we're reading the base y from GSAP then adding a sin offset via a separate group offset
+        parentGroup.position.y = Math.sin(t * 2) * 0.1;
+        scrollGroup.rotation.y += 0.005;
+        parentGroup.rotation.y += (mouseX - parentGroup.rotation.y) * 0.05;
+        parentGroup.rotation.x += (mouseY - parentGroup.rotation.x) * 0.05;
     }
-    
     renderer.render(scene, camera);
 }
 animate();
@@ -125,113 +115,79 @@ window.addEventListener('resize', () => {
 });
 
 // --- GSAP Scroll Animations ---
-let tl = gsap.timeline({
+const tl = gsap.timeline({
     scrollTrigger: {
-        trigger: "body",
-        start: "top top",
-        end: "bottom bottom",
+        trigger: 'body',
+        start: 'top top',
+        end: 'bottom bottom',
         scrub: 1
     }
 });
 
 // 1. Move left for "Fear of Diagnosis"
-tl.to(capsuleGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: 0, z: 0, ease: "power1.inOut" }, 0);
-tl.to(capsuleGroup.rotation, { x: Math.PI, y: Math.PI / 2, z: 0, ease: "power1.inOut" }, 0);
+tl.to(scrollGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: 0, z: 0, ease: 'power1.inOut' }, 0);
+tl.to(scrollGroup.rotation, { x: Math.PI, y: Math.PI / 2, z: 0, ease: 'power1.inOut' }, 0);
 
 // 2. Center and break apart for "Breaking the Stigma"
-tl.to(capsuleGroup.position, { x: 0, y: 0, z: 2, ease: "power1.inOut" }, 0.33);
-tl.to(capsuleGroup.rotation, { x: Math.PI * 1.5, y: Math.PI, z: 0, ease: "power1.inOut" }, 0.33);
-tl.to(topPart.position, { y: 0.6, ease: "power1.inOut" }, 0.33);
-tl.to(bottomPart.position, { y: -0.6, ease: "power1.inOut" }, 0.33);
+tl.to(scrollGroup.position, { x: 0, y: 0, z: 2, ease: 'power1.inOut' }, 0.33);
+tl.to(scrollGroup.rotation, { x: Math.PI * 1.5, y: Math.PI, z: 0, ease: 'power1.inOut' }, 0.33);
+tl.to(topPart.position,    { y: 0.6, ease: 'power1.inOut' }, 0.33);
+tl.to(bottomPart.position, { y: -0.6, ease: 'power1.inOut' }, 0.33);
 
-// 3. Move left and close for "CareShift Solution"
-tl.to(capsuleGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: 0, z: 0, ease: "power1.inOut" }, 0.66);
-tl.to(capsuleGroup.rotation, { x: Math.PI * 2, y: Math.PI * 1.5, z: Math.PI / 4, ease: "power1.inOut" }, 0.66);
-tl.to(topPart.position, { y: 0, ease: "power1.inOut" }, 0.66);
-tl.to(bottomPart.position, { y: 0, ease: "power1.inOut" }, 0.66);
+// 3. Move right and close for "CareShift Solution"
+tl.to(scrollGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: 0, z: 0, ease: 'power1.inOut' }, 0.66);
+tl.to(scrollGroup.rotation, { x: Math.PI * 2, y: Math.PI * 1.5, z: Math.PI / 4, ease: 'power1.inOut' }, 0.66);
+tl.to(topPart.position,    { y: 0, ease: 'power1.inOut' }, 0.66);
+tl.to(bottomPart.position, { y: 0, ease: 'power1.inOut' }, 0.66);
 
-// HTML Elements
+// --- HTML Element Animations ---
 gsap.utils.toArray('.stagger-text').forEach((elem, i) => {
-    gsap.fromTo(elem, 
-        { y: 60, opacity: 0, clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' }, 
-        { y: 0, opacity: 1, clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1.2, ease: "power4.out", delay: i * 0.15 }
+    gsap.fromTo(elem,
+        { y: 60, opacity: 0, clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' },
+        { y: 0, opacity: 1, clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1.2, ease: 'power4.out', delay: i * 0.15 }
     );
 });
 
 gsap.utils.toArray('.slide-up').forEach((elem) => {
-    gsap.fromTo(elem, 
+    gsap.fromTo(elem,
         { y: 80, opacity: 0, scale: 0.95 },
         {
-            scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" },
-            y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power4.out"
+            scrollTrigger: { trigger: elem, start: 'top 85%', toggleActions: 'play none none reverse' },
+            y: 0, opacity: 1, scale: 1, duration: 1.2, ease: 'power4.out'
         }
     );
 });
 
 // --- Journey Transition ---
 window.startJourney = function(e) {
-    if(e) e.preventDefault();
+    if (e) e.preventDefault();
     isJourneyStarting = true;
-    
-    // Stop scroll interactions and kill all scroll triggers to absolutely prevent fighting
+
     document.body.style.overflow = 'hidden';
-    if (window.ScrollTrigger) {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    }
-    if (tl) tl.kill();
-    
-    const transitionTl = gsap.timeline({
-        onComplete: () => {
-            window.location.href = 'journey.html';
-        }
-    });
+    ScrollTrigger.getAll().forEach(t => t.kill());
+    tl.kill();
 
-    // Fade out HTML content immediately
-    transitionTl.to('main', { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 0);
+    const tlT = gsap.timeline({ onComplete: () => { window.location.href = 'journey.html'; } });
 
-    // Close the pill in case it's broken apart
-    transitionTl.to(topPart.position, { y: 0, duration: 0.5, ease: "power2.inOut" }, 0);
-    transitionTl.to(bottomPart.position, { y: 0, duration: 0.5, ease: "power2.inOut" }, 0);
+    // Fade out HTML
+    tlT.to('main', { opacity: 0, duration: 0.5, ease: 'power2.inOut' }, 0);
 
-    // Animate pill popping into center
-    transitionTl.to(capsuleGroup.position, {
-        x: 0,
-        y: 0,
-        z: 4, // Safely pop towards camera
-        duration: 1.5,
-        ease: "power2.inOut"
-    }, 0);
+    // Close pill halves
+    tlT.to(topPart.position,    { y: 0, duration: 0.5, ease: 'power2.inOut' }, 0);
+    tlT.to(bottomPart.position, { y: 0, duration: 0.5, ease: 'power2.inOut' }, 0);
 
-    // Scale massively to swallow the entire screen without the camera clipping inside
-    transitionTl.to(capsuleGroup.scale, {
-        x: 4,
-        y: 4,
-        z: 4,
-        duration: 1.5,
-        ease: "power3.in"
-    }, 0);
-    
-    // Spin rapidly using relative rotation
-    transitionTl.to(capsuleGroup.rotation, {
-        x: "+=6.28", // Full 360 relative
-        y: "+=12.56", // Full 720 relative
-        z: 0,
-        duration: 1.5,
-        ease: "power2.inOut"
-    }, 0);
+    // Move pill to center and scale up to fill screen
+    tlT.to(scrollGroup.position, { x: 0, y: 0, z: 0, duration: 1.5, ease: 'power2.inOut' }, 0);
+    tlT.to(scrollGroup.scale,    { x: 5, y: 5, z: 5, duration: 1.5, ease: 'power3.in' }, 0);
+    tlT.to(scrollGroup.rotation, { x: '+=6.28', y: '+=12.56', duration: 1.5, ease: 'power2.inOut' }, 0);
 
-    // Fade into the void
-    transitionTl.to(scene.fog, {
-        near: 0.1,
-        far: 2,
-        duration: 0.8,
-        ease: "power2.in"
-    }, 0.6);
+    // Fog closes in
+    tlT.to(scene.fog, { near: 0.1, far: 3, duration: 1.0, ease: 'power2.in' }, 0.5);
 };
 
-// Handle Browser Back Button (bfcache)
+// Handle bfcache restore (browser back button)
 window.addEventListener('pageshow', (event) => {
-    if (event.persisted && isJourneyStarting) {
+    if (event.persisted) {
         window.location.reload();
     }
 });
