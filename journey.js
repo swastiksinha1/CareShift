@@ -7,19 +7,19 @@ function updateSlides() {
         if (index + 1 === currentSlide) {
             slide.classList.add('active');
             gsap.fromTo(slide,
-                { scale: 1.03, opacity: 0 },
-                { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }
+                { opacity: 0, y: 16 },
+                { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }
             );
             const content = slide.querySelector('.slide-content') || slide.querySelector('.chat-container');
             if (content) {
                 gsap.fromTo(content,
-                    { y: 30, opacity: 0 },
-                    { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1 }
+                    { y: 24, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.08 }
                 );
             }
         } else if (slide.classList.contains('active')) {
             gsap.to(slide, {
-                scale: 0.98, opacity: 0, duration: 0.3, ease: "power2.inOut",
+                opacity: 0, duration: 0.25, ease: "power2.inOut",
                 onComplete: () => slide.classList.remove('active')
             });
         }
