@@ -229,7 +229,7 @@ nav {
 
 .panel {
     min-height: 100vh;
-    padding: 0 5%;
+    padding: 120px 5% 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -255,7 +255,6 @@ nav {
 }
 
 h1 {
-    font-family: 'Outfit', sans-serif;
     font-size: clamp(3rem, 6vw, 6rem);
     line-height: 1.1;
     font-weight: 900;
