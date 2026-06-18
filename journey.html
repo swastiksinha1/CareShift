@@ -54,18 +54,26 @@
         /* Journey Tabs Navigation */
         .journey-tabs {
             position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 5%;
-            display: flex; justify-content: center; gap: 1rem; z-index: 50;
+            display: flex; gap: 0.5rem; z-index: 50;
             background: linear-gradient(to bottom, var(--bg-color) 70%, transparent);
-            flex-wrap: wrap;
+            overflow-x: auto; scrollbar-width: none; white-space: nowrap;
         }
+        .journey-tabs::-webkit-scrollbar { display: none; }
         .tab-btn {
             background: transparent; border: none; color: #64748b; font-weight: 600; font-size: 0.9rem;
-            padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s;
+            padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; white-space: nowrap;
         }
         .tab-btn:hover { color: var(--text-color); background: rgba(0,0,0,0.05); }
         .tab-btn.active { color: var(--accent-dark); background: rgba(14,165,233,0.1); }
-        .exit-btn { color: #ef4444; text-decoration: none; display: flex; align-items: center; }
+        .exit-btn { color: #ef4444; text-decoration: none; display: flex; align-items: center; margin-left: auto; }
         .exit-btn:hover { background: #fee2e2; color: #dc2626; }
+
+        /* Progress Ring */
+        .progress-ring-container {
+            position: fixed; top: 1.5rem; right: 2rem; width: 48px; height: 48px; z-index: 100;
+        }
+        .prog-fill { stroke-dasharray: 138.23; stroke-dashoffset: 138.23; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.4s ease; }
+        .prog-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #64748b; }
 
         /* Reality Check Styles */
         .rc-question { display: none; text-align: left; background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid rgba(0,0,0,0.05); }
@@ -90,15 +98,37 @@
         .res-row .desc { font-size: 0.8rem; color: #64748b; display: block; margin-top: 0.2rem; }
         .res-row a.num { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--accent-dark); text-decoration: none; white-space: nowrap; background: rgba(14,165,233,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; transition: all 0.2s; }
         .res-row a.num:hover { background: var(--accent-color); color: white; transform: translateY(-2px); }
+
+        /* Masonry Grid */
+        .masonry { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; align-items: start; padding-bottom:1rem; overflow-y:auto; flex:1; width:100%; }
+        .masonry-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); border-left-width: 6px; transition: transform 0.3s, box-shadow 0.3s; animation: fadeIn 0.4s ease both; }
+        .masonry-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .masonry-card p { font-style: italic; font-size: 0.95rem; margin: 0; color: #475569; line-height:1.5; }
+        
+        /* Custom scrollbar for masonry */
+        .masonry::-webkit-scrollbar { width: 6px; }
+        .masonry::-webkit-scrollbar-track { background: transparent; }
+        .masonry::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <div class="progress-ring-container">
+        <svg width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="22" fill="none" stroke="#e2e8f0" stroke-width="3"/>
+            <circle class="prog-fill" id="mainProgFill" cx="24" cy="24" r="22" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="prog-text" id="progText">1</div>
+    </div>
+
     <div class="journey-tabs">
         <button class="tab-btn active" onclick="goToSlide(1)">1. Barriers</button>
         <button class="tab-btn" onclick="goToSlide(2)">2. Stories</button>
         <button class="tab-btn" onclick="goToSlide(3)">3. CareBot</button>
         <button class="tab-btn" onclick="goToSlide(4)">4. Reality Check</button>
-        <button class="tab-btn" onclick="goToSlide(5)">5. Resources</button>
+        <button class="tab-btn" onclick="goToSlide(5)">5. Cost Impact</button>
+        <button class="tab-btn" onclick="goToSlide(6)">6. Specialist</button>
+        <button class="tab-btn" onclick="goToSlide(7)">7. Community</button>
+        <button class="tab-btn" onclick="goToSlide(8)">8. Resources</button>
         <a href="index.html" class="tab-btn exit-btn">Exit</a>
     </div>
 
@@ -113,7 +143,6 @@
                 <div class="chips" id="chipRow"></div>
                 <div style="font-family:'Inter',monospace; font-size:12px; font-weight:600; color:#94a3b8; margin-bottom:20px;">↑ tap as many as apply</div>
                 <div class="pathways" id="pathwayRow"></div>
-                
             </div>
             <div class="slide-nav">
                 <button onclick="goToSlide(2)" class="btn-nav">Continue to Stories &rarr;</button>
@@ -182,22 +211,89 @@
                 <div id="rc-result" style="display:none; text-align:center; padding: 2rem;">
                     <div class="svg-meter">
                         <svg width="140" height="140" viewBox="0 0 140 140">
-                            <!-- Background track -->
                             <circle cx="70" cy="70" r="60" fill="none" stroke="#e2e8f0" stroke-width="12"/>
-                            <!-- Fill track -->
                             <circle class="meter-fill" id="meterFill" cx="70" cy="70" r="60" fill="none" stroke="var(--accent-color)" stroke-width="12" stroke-linecap="round"/>
                         </svg>
                         <div class="meter-text" id="meterText">94%</div>
                     </div>
                     <h3 style="margin-top:1.5rem; font-family:'Outfit',sans-serif; font-size:1.8rem; font-weight:800; color:var(--text-color); line-height:1.2;">Your concern is medically valid</h3>
                     <p style="margin-top:0.5rem; color:#475569;">Most people with these patterns were advised to consult a doctor. The safest next step is to speak with a professional.</p>
-                    <button onclick="goToSlide(5)" class="btn-nav" style="margin-top:1rem; width:100%;">View National Helplines</button>
+                    <button onclick="goToSlide(5)" class="btn-nav" style="margin-top:1rem; width:100%;">See Cost of Waiting</button>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 5: Resources -->
-        <div class="slide slide-resources" id="slide-5">
+        <!-- Slide 5: Cost Impact -->
+        <div class="slide slide-cost" id="slide-5">
+            <div class="slide-content" style="max-width: 800px;">
+                <h2>Cost of Waiting</h2>
+                <p>See how delaying consultation impacts treatment costs.</p>
+                
+                <div style="margin: 2rem 0; text-align:left;">
+                    <label style="font-weight:600; color:#475569;">How long have you been ignoring this? (<span id="mo-val">1</span> months)</label>
+                    <input type="range" id="costSlider" min="1" max="36" value="1" style="width:100%; margin-top:1rem; cursor:pointer;" oninput="updateCostSlider(this.value)">
+                </div>
+
+                <div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center;">
+                    <div class="res-card" style="flex:1; min-width:250px; text-align:center;">
+                        <div style="font-size:0.8rem; font-weight:700; color:#10b981; text-transform:uppercase;">Early Detection Cost</div>
+                        <div style="font-size:3rem; font-family:'Outfit',sans-serif; font-weight:900; color:var(--text-color);">₹<span id="earlyCost">500</span></div>
+                    </div>
+                    <div class="res-card" style="flex:1; min-width:250px; text-align:center;">
+                        <div style="font-size:0.8rem; font-weight:700; color:#ef4444; text-transform:uppercase;">Late Detection Cost</div>
+                        <div style="font-size:3rem; font-family:'Outfit',sans-serif; font-weight:900; color:var(--text-color);">₹<span id="lateCost">500</span></div>
+                    </div>
+                </div>
+                <div id="costMoto" style="margin-top:2rem; font-size:1.2rem; font-weight:600; text-align:center; color:var(--accent-dark); background:rgba(14,165,233,0.1); padding:1rem; border-radius:12px;">
+                    You're in the best window. Act now.
+                </div>
+                <button onclick="goToSlide(6)" class="btn-nav" style="margin-top:2rem;">Find a Specialist &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Slide 6: Specialist Finder -->
+        <div class="slide slide-specialist" id="slide-6">
+            <div class="slide-content" style="max-width: 800px;">
+                <h2>Find Your Specialist</h2>
+                <p>Select your symptoms below to find out exactly who you need to see.</p>
+                
+                <div class="chips" id="specChips" style="margin-bottom:2rem;">
+                    <!-- Generated via JS -->
+                </div>
+
+                <div id="specResult" class="res-card" style="display:none; text-align:center; padding:3rem;">
+                    <h3 style="font-size:2rem; margin-bottom:0.5rem; color:var(--text-color);">You should see a <span id="specType" style="color:var(--accent-color);"></span></h3>
+                    <p style="color:#64748b; margin-bottom:1.5rem; font-size:1.1rem;">Estimated Consultation under PM-JAY: <b style="color:var(--text-color);">₹0 - ₹500</b></p>
+                    <button class="btn-nav" onclick="openBottomSheet()">Find Government Hospital</button>
+                </div>
+            </div>
+            <div class="slide-nav">
+                <button onclick="goToSlide(7)" class="btn-nav">Read Community Wall &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Slide 7: Community Wall -->
+        <div class="slide slide-community" id="slide-7">
+            <div class="slide-content" style="max-width: 900px; height: 80vh; display:flex; flex-direction:column; padding-top:4rem;">
+                <h2 style="margin-bottom:0.5rem;">Community Wall</h2>
+                <p style="margin-bottom:1.5rem;">Anonymous confessions from people exactly where you are.</p>
+                
+                <div class="masonry" id="masonryGrid">
+                    <!-- Generated via JS -->
+                </div>
+
+                <div style="display:flex; gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid rgba(0,0,0,0.05); flex-shrink:0;">
+                    <input type="text" id="commInput" placeholder="Add your story anonymously..." style="flex:1; padding:1rem 1.5rem; border:1px solid #e2e8f0; border-radius:30px; outline:none; font-family:inherit; background:white;">
+                    <button onclick="submitStory()" class="btn-nav" style="border-radius:30px; white-space:nowrap;">Share</button>
+                </div>
+            </div>
+            <div class="slide-nav" style="position:absolute; bottom:2rem; right:5%;">
+                <button onclick="goToSlide(8)" class="btn-nav">View Helplines &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Slide 8: Resources -->
+        <div class="slide slide-resources" id="slide-8">
             <div class="slide-content" style="max-width: 1000px;">
                 <h2>Your Action Plan</h2>
                 <p>Free, verified national helplines. Make the call today.</p>
@@ -241,11 +337,29 @@
                 </div>
             </div>
             <div class="slide-nav">
-                <button onclick="goToSlide(4)" class="btn-nav ghost">&larr; Back</button>
+                <button onclick="goToSlide(7)" class="btn-nav ghost">&larr; Back</button>
                 <a href="index.html" class="btn-nav" style="text-decoration:none;">Finish Journey</a>
             </div>
         </div>
 
+    </div>
+
+    <!-- Bottom Sheet -->
+    <div id="bottomSheetOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:999; backdrop-filter:blur(2px);">
+        <div id="bottomSheet" style="position:absolute; bottom:-100%; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:white; border-radius:24px 24px 0 0; padding:2rem; box-shadow:0 -10px 40px rgba(0,0,0,0.1); transition:bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h3 style="font-family:'Outfit',sans-serif; font-size:1.5rem; margin:0; color:var(--text-color);">Find a Free Clinic</h3>
+                <button onclick="closeBottomSheet()" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#64748b;">&times;</button>
+            </div>
+            <input type="text" placeholder="Search your city..." style="width:100%; padding:1rem; border:1px solid #e2e8f0; border-radius:12px; outline:none; margin-bottom:1.5rem; font-family:inherit;">
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                <a href="#" class="rc-option" style="text-decoration:none; display:flex; justify-content:space-between;">Delhi <span style="color:var(--accent-color);">&rarr;</span></a>
+                <a href="#" class="rc-option" style="text-decoration:none; display:flex; justify-content:space-between;">Mumbai <span style="color:var(--accent-color);">&rarr;</span></a>
+                <a href="#" class="rc-option" style="text-decoration:none; display:flex; justify-content:space-between;">Bengaluru <span style="color:var(--accent-color);">&rarr;</span></a>
+                <a href="#" class="rc-option" style="text-decoration:none; display:flex; justify-content:space-between;">Chennai <span style="color:var(--accent-color);">&rarr;</span></a>
+                <a href="#" class="rc-option" style="text-decoration:none; display:flex; justify-content:space-between;">Patna <span style="color:var(--accent-color);">&rarr;</span></a>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
