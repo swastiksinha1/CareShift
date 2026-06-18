@@ -245,6 +245,7 @@ p {
     flex-direction: column;
     background-color: var(--bg-color);
     color: var(--text-color);
+    padding-top: 80px; /* Prevent overlap with journey-tabs */
 }
 
 .chat-header {
