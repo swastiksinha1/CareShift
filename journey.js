@@ -50,12 +50,7 @@ function updateSlides() {
         const ratio = currentSlide / totalSlides;
         const offset = c - (ratio * c);
         
-        gsap.to(progFill, { strokeDashoffset: offset, duration: 1, ease: "power3.out" });
-        
-        gsap.fromTo('.progress-ring-container', 
-            { scale: 1.15, filter: 'drop-shadow(0 0 15px rgba(14,165,233,0.4))' }, 
-            { scale: 1, filter: 'drop-shadow(0 0 0px rgba(14,165,233,0))', duration: 1, ease: "power2.out" }
-        );
+        gsap.to(progFill, { strokeDashoffset: offset, duration: 0.8, ease: "power3.out" });
     }
 }
 
