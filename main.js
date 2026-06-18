@@ -194,9 +194,18 @@ window.startJourney = function(e) {
     transitionTl.to(capsuleGroup.position, {
         x: 0,
         y: 0,
-        z: 5, // Safely pop towards camera without clipping near plane
-        duration: 1.2,
-        ease: "back.out(1.5)"
+        z: 4, // Safely pop towards camera
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, 0);
+
+    // Scale massively to swallow the entire screen
+    transitionTl.to(capsuleGroup.scale, {
+        x: 30,
+        y: 30,
+        z: 30,
+        duration: 1.5,
+        ease: "power3.in"
     }, 0);
     
     // Spin rapidly using relative rotation
@@ -204,8 +213,8 @@ window.startJourney = function(e) {
         x: "+=6.28", // Full 360 relative
         y: "+=12.56", // Full 720 relative
         z: 0,
-        duration: 1.2,
-        ease: "power3.inOut"
+        duration: 1.5,
+        ease: "power2.inOut"
     }, 0);
 
     // Fade into the void
