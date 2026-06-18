@@ -14,7 +14,7 @@
         /* Prevent white flash & smooth entrance */
         html { background-color: #f8fafc; }
         html.dark-mode { background-color: #050505; }
-        body { margin: 0; padding: 0; animation: pageIn 0.6s ease forwards; }
+        body { margin: 0; padding: 0; animation: pageIn 0.5s ease forwards; }
         @keyframes pageIn {
             from { opacity: 0; }
             to   { opacity: 1; }
@@ -22,8 +22,8 @@
         /* Full-screen entrance overlay that fades out */
         #entrance-overlay {
             position: fixed; inset: 0; z-index: 99999;
-            background: #0ea5e9;
-            animation: overlayOut 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+            background: #050505;
+            animation: overlayOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.05s forwards;
             pointer-events: none;
         }
         @keyframes overlayOut {
