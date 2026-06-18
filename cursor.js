@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cursorRing.style.left = `${ringX}px`;
         cursorRing.style.top = `${ringY}px`;
         
-        // 3D Tilt for Masonry Cards
-        document.querySelectorAll('.masonry-card').forEach(card => {
+        // 3D Tilt for Masonry Cards and Story Cards
+        document.querySelectorAll('.masonry-card, .story-card').forEach(card => {
             const rect = card.getBoundingClientRect();
             const cardX = rect.left + rect.width / 2;
             const cardY = rect.top + rect.height / 2;

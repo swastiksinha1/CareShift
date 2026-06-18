@@ -27,9 +27,12 @@
           box-shadow: 0 10px 40px rgba(0,0,0,0.04);
           transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .path-card { animation:rise .5s cubic-bezier(0.4, 0, 0.2, 1) both; }
-        .path-card:hover, .story-card:hover, .res-card:hover {
+        .path-card, .story-card { animation:rise .5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+        .path-card:hover, .res-card:hover {
           transform: translateY(-8px);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+        .story-card:hover {
           box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
         @keyframes rise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
@@ -188,27 +191,27 @@
                 <p>Real stories from people who were exactly where you are right now.</p>
                 
                 <div class="stories-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; text-align: left; margin-top: 2rem; max-width: 1000px;">
-                    <div class="story-card">
+                    <div class="story-card" style="animation-delay: 0.1s;">
                         <p class="quote" style="font-size: 1.05rem; line-height: 1.6;">"I kept putting off my checkup because I felt fine. Turns out, catching my high blood pressure early saved me from a major stroke. The hardest part was just making the appointment."</p>
                         <div class="author" style="margin-top: 1rem; font-weight: 700; color: var(--accent-dark);">&mdash; Marcus, 42</div>
                     </div>
-                    <div class="story-card">
+                    <div class="story-card" style="animation-delay: 0.2s;">
                         <p class="quote" style="font-size: 1.05rem; line-height: 1.6;">"I was terrified of finding out I had diabetes like my father. The anxiety of not knowing was actually worse than the diagnosis. Now, it's totally managed and I feel in control."</p>
                         <div class="author" style="margin-top: 1rem; font-weight: 700; color: var(--accent-dark);">&mdash; Sarah, 35</div>
                     </div>
-                    <div class="story-card">
+                    <div class="story-card" style="animation-delay: 0.3s;">
                         <p class="quote" style="font-size: 1.05rem; line-height: 1.6;">"I thought taking time off work for tests was a luxury I couldn't afford. But investing that one afternoon gave me peace of mind for the whole year. Worth every second."</p>
                         <div class="author" style="margin-top: 1rem; font-weight: 700; color: var(--accent-dark);">&mdash; David, 50</div>
                     </div>
-                    <div class="story-card">
+                    <div class="story-card" style="animation-delay: 0.4s;">
                         <p class="quote" style="font-size: 1.05rem; line-height: 1.6;">"As a young guy, I thought I was invincible. Getting a routine blood test felt like something only older people did. Finding out I had a severe vitamin deficiency explained my constant fatigue. I'm literally a new person now."</p>
                         <div class="author" style="margin-top: 1rem; font-weight: 700; color: var(--accent-dark);">&mdash; Leo, 28</div>
                     </div>
-                    <div class="story-card">
+                    <div class="story-card" style="animation-delay: 0.5s;">
                         <p class="quote" style="font-size: 1.05rem; line-height: 1.6;">"I ignored the mild chest pains because I didn't want to be 'that dramatic person' at the ER. My wife finally forced me to go. It was early stage heart disease. Speaking up saved my life."</p>
                         <div class="author" style="margin-top: 1rem; font-weight: 700; color: var(--accent-dark);">&mdash; James, 55</div>
                     </div>
-                    <div class="story-card">
+                    <div class="story-card" style="animation-delay: 0.6s;">
                         <p class="quote" style="font-size: 1.05rem; line-height: 1.6;">"I was so embarrassed about my weight that I avoided doctors for five years. When I finally went, the doctor didn't judge me at all—she just gave me a plan. The relief of just facing it was incredible."</p>
                         <div class="author" style="margin-top: 1rem; font-weight: 700; color: var(--accent-dark);">&mdash; Elena, 39</div>
                     </div>
