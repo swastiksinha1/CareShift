@@ -109,7 +109,7 @@ a, button, .chip, .barrier-card, input {
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow: hidden;
@@ -117,6 +117,11 @@ body {
     display: flex;
     flex-direction: column;
     transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+h1, h2, h3, .logo {
+    font-family: 'Clash Display', sans-serif;
+    font-weight: 600;
 }
 
 .theme-toggle {
@@ -192,12 +197,11 @@ body {
 }
 
 h2 {
-    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(3rem, 6vw, 5rem);
     line-height: 1.1;
-    font-weight: 400;
+    font-weight: 600;
     margin-bottom: 1rem;
-    letter-spacing: 2px;
+    letter-spacing: -1px;
 }
 
 p {

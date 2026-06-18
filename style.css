@@ -109,12 +109,18 @@ a, button, .chip, .barrier-card, input {
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-x: hidden;
+    scroll-behavior: smooth;
     transition: background-color 0.4s ease, color 0.4s ease;
-    cursor: default;
+}
+
+h1, h2, h3, .logo {
+    font-family: 'Clash Display', sans-serif;
+    font-weight: 600;
 }
 
 .theme-toggle {
