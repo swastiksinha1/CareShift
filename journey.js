@@ -1,5 +1,5 @@
 let currentSlide = 1;
-const totalSlides = 3;
+const totalSlides = 5;
 
 // Navigation
 function updateSlides() {
@@ -14,20 +14,30 @@ function updateSlides() {
             slide.classList.remove('active');
         }
     });
+
+    // Update Tab Navigation
+    document.querySelectorAll('.journey-tabs .tab-btn:not(.exit-btn)').forEach((btn, index) => {
+        if (index + 1 === currentSlide) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
 }
 
-function nextSlide() {
-    if (currentSlide < totalSlides) {
-        currentSlide++;
+window.goToSlide = function(slideNum) {
+    if (slideNum >= 1 && slideNum <= totalSlides) {
+        currentSlide = slideNum;
         updateSlides();
     }
 }
 
-function prevSlide() {
-    if (currentSlide > 1) {
-        currentSlide--;
-        updateSlides();
-    }
+window.nextSlide = function() {
+    goToSlide(currentSlide + 1);
+}
+
+window.prevSlide = function() {
+    goToSlide(currentSlide - 1);
 }
 
 // --- Barrier Logic Extracted from Saathi ---
@@ -123,13 +133,12 @@ if(quickRow) {
     quickPrompts.forEach(q=>{
       const btn = document.createElement('button'); 
       btn.textContent=q;
-      btn.onclick=()=>{ chatInput.value=q; sendMessage(); };
+      btn.onclick=()=>{ chatInput.value=q; window.sendMessage(); };
       quickRow.appendChild(btn);
     });
 }
 
 const CRISIS_WORDS = ['suicide','kill myself','end my life','end it all','dont want to live',"don't want to live",'no reason to live','self harm','self-harm','harm myself','hurt myself','better off dead','cant go on',"can't go on"];
-
 const CATEGORIES = [
   { id:'crisis', words:CRISIS_WORDS },
   { id:'fear', words:['scared','afraid','fear','dont want to know',"don't want to know",'worried it','what if it','diagnosis','test result'] },
@@ -193,7 +202,7 @@ function addBubble(html, who){
   const b = document.createElement('div');
   b.className = 'message ' + (who.includes('user') ? 'user-message' : 'bot-message');
   
-  let avatar = who.includes('user') ? 'U' : 'S';
+  let avatar = who.includes('user') ? 'U' : 'C';
   let msgClass = 'msg-content';
   if(who.includes('crisis')) msgClass += ' crisis';
 
@@ -213,7 +222,7 @@ function addTyping(){
   const t=document.createElement('div');
   t.className='message bot-message'; t.id='typingNow';
   t.innerHTML=`
-      <div class="avatar">S</div>
+      <div class="avatar">C</div>
       <div class="msg-content typing">
           <span></span><span></span><span></span>
       </div>
@@ -248,7 +257,7 @@ function botReply(userText){
   }, 650 + Math.random()*500);
 }
 
-function sendMessage(){
+window.sendMessage = function(){
   if(!chatInput) return;
   const val = chatInput.value.trim();
   if(!val) return;
@@ -257,16 +266,113 @@ function sendMessage(){
   botReply(val);
 }
 
-function handleKeyPress(e) {
+window.handleKeyPress = function(e) {
     if (e.key === 'Enter') {
-        sendMessage();
+        window.sendMessage();
     }
 }
+
+
+// --- Reality Check Logic ---
+const rcQuestions = [
+    { q: "How long has this symptom or concern been bothering you?", opts: ["Just started", "A few weeks", "Months", "Years"] },
+    { q: "How frequently does it occupy your thoughts?", opts: ["Rarely", "A few times a week", "Every single day"] },
+    { q: "Is it actively stopping you from doing things you normally do?", opts: ["No", "Sometimes", "Yes, significantly"] },
+    { q: "Have you Googled your symptoms multiple times?", opts: ["No", "Once or twice", "Yes, it's a rabbit hole"] },
+    { q: "Has someone close to you noticed or asked about it?", opts: ["No", "They've hinted at it", "Yes, they asked directly"] }
+];
+
+let currentRcIndex = 0;
+const rcContainer = document.getElementById('rc-container');
+
+function renderRcQuestions() {
+    if(!rcContainer) return;
+    rcContainer.innerHTML = '';
+    
+    rcQuestions.forEach((item, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = `rc-question ${index === 0 ? 'visible' : ''}`;
+        qDiv.id = `rc-q-${index}`;
+        
+        const qTitle = document.createElement('h3');
+        qTitle.textContent = `${index + 1}. ${item.q}`;
+        qDiv.appendChild(qTitle);
+        
+        const optContainer = document.createElement('div');
+        optContainer.className = 'rc-options';
+        
+        item.opts.forEach(opt => {
+            const btn = document.createElement('div');
+            btn.className = 'rc-option';
+            btn.textContent = opt;
+            btn.onclick = () => handleRcSelection(index, btn);
+            optContainer.appendChild(btn);
+        });
+        
+        qDiv.appendChild(optContainer);
+        rcContainer.appendChild(qDiv);
+    });
+}
+
+function handleRcSelection(qIndex, btnElem) {
+    const qDiv = document.getElementById(`rc-q-${qIndex}`);
+    
+    // Remove selected class from siblings
+    qDiv.querySelectorAll('.rc-option').forEach(el => el.classList.remove('selected'));
+    btnElem.classList.add('selected');
+    
+    // Show next question or results
+    if (qIndex + 1 < rcQuestions.length) {
+        setTimeout(() => {
+            const nextQ = document.getElementById(`rc-q-${qIndex + 1}`);
+            if(nextQ && !nextQ.classList.contains('visible')) {
+                nextQ.classList.add('visible');
+                // Scroll into view gently
+                nextQ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 300);
+    } else {
+        // All answered - show result
+        setTimeout(() => {
+            showRcResult();
+        }, 500);
+    }
+}
+
+function showRcResult() {
+    const resultDiv = document.getElementById('rc-result');
+    if(!resultDiv) return;
+    
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Animate SVG Meter
+    // Circle circumference = 2 * Math.PI * 60 = ~377
+    const fillElem = document.getElementById('meterFill');
+    const textElem = document.getElementById('meterText');
+    
+    if(fillElem && textElem) {
+        // Trigger reflow
+        void fillElem.offsetWidth; 
+        
+        // Target percentage (e.g., 92%)
+        const targetPct = 92;
+        const c = 377; // circumference
+        const offset = c - (targetPct / 100) * c;
+        
+        setTimeout(() => {
+            fillElem.style.strokeDashoffset = offset;
+            textElem.style.opacity = '1';
+        }, 100);
+    }
+}
+
 
 // Initial initialization
 document.addEventListener('DOMContentLoaded', () => {
     updateSlides();
     if(chatLog) {
-        addBubble("Hi — I'm Saathi. You don't need to introduce a symptom or a diagnosis. Just tell me what's making this hard to act on, in your own words.", 'bot');
+        addBubble("Hi — I'm CareBot. You don't need to introduce a symptom or a diagnosis. Just tell me what's making this hard to act on, in your own words.", 'bot');
     }
+    renderRcQuestions();
 });

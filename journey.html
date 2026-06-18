@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareShift - The Journey</title>
     <link rel="stylesheet" href="journey.css">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         /* Custom Saathi Content Styles applied to Journey */
         .chips { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; justify-content:center; }
@@ -13,17 +13,22 @@
           font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px;
           padding:13px 20px; border-radius:100px; border:1.5px solid rgba(0,0,0,0.1);
           background:rgba(255,255,255,0.8); color:var(--text-color); cursor:pointer;
-          transition:all .15s ease; user-select:none;
+          transition:all .2s ease; user-select:none;
         }
-        .chip:hover { border-color:rgba(0,0,0,0.3); }
+        .chip:hover { border-color:rgba(0,0,0,0.3); transform: translateY(-2px); }
         .chip.active { background:var(--accent-color); color:var(--white); border-color:var(--accent-color); }
         
         .pathways { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; margin-top:20px; text-align: left; }
-        .path-card {
+        .path-card, .story-card, .res-card {
           background:var(--white); color:var(--text-color); border-radius:16px; padding:24px;
           border: 1px solid rgba(0,0,0,0.05);
           box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-          animation:rise .35s ease both;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .path-card { animation:rise .35s ease both; }
+        .path-card:hover, .story-card:hover, .res-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
         @keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
         .path-card h3 { font-size:18px; margin-bottom:10px; font-family:'Inter', sans-serif; font-weight: 800; }
@@ -45,9 +50,58 @@
         .typing span { width:6px; height:6px; border-radius:50%; background:#cbd5e1; animation:tb 1s infinite ease-in-out; }
         .typing span:nth-child(2) { animation-delay:.15s; } .typing span:nth-child(3) { animation-delay:.3s; }
         @keyframes tb { 0%,60%,100%{transform:translateY(0);opacity:0.4;} 30%{transform:translateY(-4px);opacity:1;} }
+
+        /* Journey Tabs Navigation */
+        .journey-tabs {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 5%;
+            display: flex; justify-content: center; gap: 1rem; z-index: 50;
+            background: linear-gradient(to bottom, var(--bg-color) 70%, transparent);
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: transparent; border: none; color: #64748b; font-weight: 600; font-size: 0.9rem;
+            padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: all 0.2s;
+        }
+        .tab-btn:hover { color: var(--text-color); background: rgba(0,0,0,0.05); }
+        .tab-btn.active { color: var(--accent-dark); background: rgba(14,165,233,0.1); }
+        .exit-btn { color: #ef4444; text-decoration: none; display: flex; align-items: center; }
+        .exit-btn:hover { background: #fee2e2; color: #dc2626; }
+
+        /* Reality Check Styles */
+        .rc-question { display: none; text-align: left; background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 1rem; border: 1px solid rgba(0,0,0,0.05); }
+        .rc-question.visible { display: block; animation: fadeIn 0.5s ease both; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .rc-question h3 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-color); }
+        .rc-options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .rc-option { background: #f1f5f9; border: 1px solid transparent; padding: 0.6rem 1.2rem; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; color: #475569; }
+        .rc-option:hover { background: #e2e8f0; transform: translateY(-2px); }
+        .rc-option.selected { background: var(--accent-color); color: white; box-shadow: 0 4px 10px rgba(14,165,233,0.3); }
+        
+        .svg-meter { position: relative; width: 140px; height: 140px; margin: 0 auto; }
+        .meter-fill { stroke-dasharray: 377; stroke-dashoffset: 377; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .meter-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 900; color: var(--accent-color); opacity: 0; transition: opacity 0.5s 1.5s; }
+
+        /* Resources Styles */
+        .res-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; text-align: left; width: 100%; }
+        .res-card .cat { font-family: 'Inter', monospace; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-color); margin-bottom: 1rem; }
+        .res-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.8rem 0; border-top: 1px solid rgba(0,0,0,0.05); gap: 1rem; }
+        .res-row:first-of-type { border-top: none; padding-top: 0; }
+        .res-row .name { font-weight: 700; font-size: 1rem; color: var(--text-color); display: block; }
+        .res-row .desc { font-size: 0.8rem; color: #64748b; display: block; margin-top: 0.2rem; }
+        .res-row a.num { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--accent-dark); text-decoration: none; white-space: nowrap; background: rgba(14,165,233,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; transition: all 0.2s; }
+        .res-row a.num:hover { background: var(--accent-color); color: white; transform: translateY(-2px); }
     </style>
 </head>
 <body>
+    <div class="journey-tabs">
+        <button class="tab-btn active" onclick="goToSlide(1)">1. Barriers</button>
+        <button class="tab-btn" onclick="goToSlide(2)">2. Stories</button>
+        <button class="tab-btn" onclick="goToSlide(3)">3. CareBot</button>
+        <button class="tab-btn" onclick="goToSlide(4)">4. Reality Check</button>
+        <button class="tab-btn" onclick="goToSlide(5)">5. Resources</button>
+        <a href="index.html" class="tab-btn exit-btn">Exit</a>
+    </div>
+
     <div class="slides-container">
         
         <!-- Slide 1: Barriers (Saathi Picker) -->
@@ -57,12 +111,12 @@
                 <p>Pick whatever is true right now. There's no wrong answer, and nothing here gets saved.</p>
                 
                 <div class="chips" id="chipRow"></div>
-                <div style="font-family:'Space Mono',monospace; font-size:12px; opacity:0.5; margin-bottom:20px;">↑ tap as many as apply</div>
+                <div style="font-family:'Inter',monospace; font-size:12px; font-weight:600; color:#94a3b8; margin-bottom:20px;">↑ tap as many as apply</div>
                 <div class="pathways" id="pathwayRow"></div>
                 
             </div>
             <div class="slide-nav">
-                <button onclick="nextSlide()" class="btn-nav">Continue to Stories &rarr;</button>
+                <button onclick="goToSlide(2)" class="btn-nav">Continue to Stories &rarr;</button>
             </div>
         </div>
 
@@ -84,8 +138,8 @@
                 </div>
             </div>
             <div class="slide-nav">
-                <button onclick="prevSlide()" class="btn-nav ghost">&larr; Back</button>
-                <button onclick="nextSlide()" class="btn-nav">Talk to Saathi CareBot &rarr;</button>
+                <button onclick="goToSlide(1)" class="btn-nav ghost">&larr; Back</button>
+                <button onclick="goToSlide(3)" class="btn-nav">Talk to CareBot &rarr;</button>
             </div>
         </div>
 
@@ -95,10 +149,10 @@
                 <div class="chat-header">
                     <div class="status-indicator"></div>
                     <div>
-                        <h3 style="color:var(--text-color); font-family:'Outfit',sans-serif; font-weight:800; letter-spacing:-0.5px;">Saathi CareBot</h3>
-                        <span class="subtitle" style="color:#64748b;">Anonymous & Confidential</span>
+                        <h3 style="color:var(--text-color); font-family:'Outfit',sans-serif; font-weight:800; letter-spacing:-0.5px; margin:0;">CareBot</h3>
+                        <span class="subtitle" style="color:#64748b; font-size:0.8rem;">Anonymous & Confidential</span>
                     </div>
-                    <a href="index.html" class="btn-exit">Exit</a>
+                    <button onclick="goToSlide(4)" class="btn-nav" style="margin-left:auto; padding:0.5rem 1.5rem;">Take Reality Check &rarr;</button>
                 </div>
                 <div class="chat-body" id="chat-body">
                     <!-- Dynamic Saathi Chat Log -->
@@ -112,6 +166,83 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Reality Check -->
+        <div class="slide slide-reality" id="slide-4">
+            <div class="slide-content" style="max-width: 600px;">
+                <h2>Reality Check</h2>
+                <p>A 5-question micro-assessment. No data is stored.</p>
+                
+                <div id="rc-container">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div id="rc-result" style="display:none; text-align:center; padding: 2rem;">
+                    <div class="svg-meter">
+                        <svg width="140" height="140" viewBox="0 0 140 140">
+                            <!-- Background track -->
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+                            <!-- Fill track -->
+                            <circle class="meter-fill" id="meterFill" cx="70" cy="70" r="60" fill="none" stroke="var(--accent-color)" stroke-width="12" stroke-linecap="round"/>
+                        </svg>
+                        <div class="meter-text" id="meterText">94%</div>
+                    </div>
+                    <h3 style="margin-top:1.5rem; font-family:'Outfit',sans-serif; font-size:1.8rem; font-weight:800; color:var(--text-color); line-height:1.2;">Your concern is medically valid</h3>
+                    <p style="margin-top:0.5rem; color:#475569;">Most people with these patterns were advised to consult a doctor. The safest next step is to speak with a professional.</p>
+                    <button onclick="goToSlide(5)" class="btn-nav" style="margin-top:1rem; width:100%;">View National Helplines</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Resources -->
+        <div class="slide slide-resources" id="slide-5">
+            <div class="slide-content" style="max-width: 1000px;">
+                <h2>Your Action Plan</h2>
+                <p>Free, verified national helplines. Make the call today.</p>
+                
+                <div class="res-groups">
+                    <div class="res-card">
+                        <div class="cat">Mental Health Support</div>
+                        <div class="res-row">
+                            <div><span class="name">Tele-MANAS</span><span class="desc">24/7 govt line, 20+ languages</span></div>
+                            <a class="num" href="tel:14416">14416</a>
+                        </div>
+                        <div class="res-row">
+                            <div><span class="name">KIRAN</span><span class="desc">Mental health rehab, anonymous</span></div>
+                            <a class="num" href="tel:18005990019">1800-599-0019</a>
+                        </div>
+                    </div>
+
+                    <div class="res-card">
+                        <div class="cat">Cost & Coverage Verification</div>
+                        <div class="res-row">
+                            <div><span class="name">PM-JAY</span><span class="desc">Check free treatment eligibility</span></div>
+                            <a class="num" href="tel:14555">14555</a>
+                        </div>
+                        <div class="res-row">
+                            <div><span class="name">PM-JAY Toll Free</span><span class="desc">Alternative line</span></div>
+                            <a class="num" href="tel:18001115651">1800-111-565</a>
+                        </div>
+                    </div>
+
+                    <div class="res-card">
+                        <div class="cat">General Medical Triage</div>
+                        <div class="res-row">
+                            <div><span class="name">National Health Line</span><span class="desc">Medical advice over the phone</span></div>
+                            <a class="num" href="tel:104">104</a>
+                        </div>
+                        <div class="res-row">
+                            <div><span class="name">Emergency</span><span class="desc">Ambulance</span></div>
+                            <a class="num" href="tel:108">108</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-nav">
+                <button onclick="goToSlide(4)" class="btn-nav ghost">&larr; Back</button>
+                <a href="index.html" class="btn-nav" style="text-decoration:none;">Finish Journey</a>
             </div>
         </div>
 
