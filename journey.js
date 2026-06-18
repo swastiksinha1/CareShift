@@ -7,19 +7,19 @@ function updateSlides() {
         if (index + 1 === currentSlide) {
             slide.classList.add('active');
             gsap.fromTo(slide,
-                { scale: 1.1, opacity: 0 },
-                { scale: 1, opacity: 1, duration: 1, ease: "power4.out" }
+                { scale: 1.03, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }
             );
             const content = slide.querySelector('.slide-content') || slide.querySelector('.chat-container');
             if (content) {
                 gsap.fromTo(content,
-                    { y: 60, opacity: 0 },
-                    { y: 0, opacity: 1, duration: 1.2, ease: "power4.out", delay: 0.2 }
+                    { y: 30, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1 }
                 );
             }
         } else if (slide.classList.contains('active')) {
             gsap.to(slide, {
-                scale: 0.95, opacity: 0, duration: 0.6, ease: "power3.in",
+                scale: 0.98, opacity: 0, duration: 0.3, ease: "power2.inOut",
                 onComplete: () => slide.classList.remove('active')
             });
         }
@@ -363,28 +363,29 @@ const masonryGrid = document.getElementById('masonryGrid');
 const pastelColors = ['#bae6fd', '#bbf7d0', '#e9d5ff', '#fef08a', '#fbcfe8'];
 let colorIdx = 0;
 
-const initialStories = [
-    "Waited 3 years. Early stage. Caught in time.",
-    "My friends thought I was being dramatic. The doctor didn't.",
-    "Finally made the call. The relief is better than the fear.",
-    "Cost was my barrier. PM-JAY actually worked for my family.",
-    "It took me 6 months to say it out loud. You can do it today.",
-    "Thought it was 'just stress'. Glad I checked anyway.",
-    "The 10-minute triage call saved my life.",
-    "Taking control feels terrifying at first, then incredibly empowering."
+const storiesData = [
+    { text: "I kept putting off my checkup because I felt fine. Turns out, catching my high blood pressure early saved me from a major stroke. The hardest part was just making the appointment.", name: "Marcus, 42" },
+    { text: "I was terrified of finding out I had diabetes like my father. The anxiety of not knowing was actually worse than the diagnosis. Now, it's totally managed and I feel in control.", name: "Sarah, 35" },
+    { text: "I thought taking time off work for tests was a luxury I couldn't afford. But investing that one afternoon gave me peace of mind for the whole year. Worth every second.", name: "David, 50" },
+    { text: "As a young guy, I thought I was invincible. Getting a routine blood test felt like something only older people did. Finding out I had a severe vitamin deficiency explained my constant fatigue. I'm literally a new person now.", name: "Leo, 28" },
+    { text: "I ignored the mild chest pains because I didn't want to be 'that dramatic person' at the ER. My wife finally forced me to go. It was early stage heart disease. Speaking up saved my life.", name: "James, 55" },
+    { text: "I was so embarrassed about my weight that I avoided doctors for five years. When I finally went, the doctor didn't judge me at all—she just gave me a plan. The relief of just facing it was incredible.", name: "Elena, 39" }
 ];
 
-function createStoryCard(text) {
+function createStoryCard(story) {
     const card = document.createElement('div');
     card.className = 'masonry-card';
     card.style.borderLeftColor = pastelColors[colorIdx % pastelColors.length];
     colorIdx++;
-    card.innerHTML = `<p>"${text}"</p>`;
+    // Support either object format or plain string (from user input)
+    const text = typeof story === 'string' ? story : story.text;
+    const name = typeof story === 'string' ? 'Anonymous' : story.name;
+    card.innerHTML = `<p>"${text}"</p><div style="margin-top: 1rem; font-weight: 600; opacity: 0.8; font-size: 0.9rem;">— ${name}</div>`;
     return card;
 }
 
 if(masonryGrid) {
-    initialStories.forEach(s => {
+    storiesData.forEach(s => {
         masonryGrid.appendChild(createStoryCard(s));
     });
 }
