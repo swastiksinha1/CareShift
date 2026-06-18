@@ -73,6 +73,10 @@ bottomPart.add(bottomDomeMesh);
 capsuleGroup.add(topPart);
 capsuleGroup.add(bottomPart);
 
+const parentGroup = new THREE.Group();
+scene.add(parentGroup);
+parentGroup.add(capsuleGroup);
+
 capsuleGroup.position.set(2, 0, 0);
 capsuleGroup.rotation.z = Math.PI / 4;
 capsuleGroup.rotation.x = Math.PI / 6;
@@ -81,13 +85,30 @@ capsuleGroup.rotation.x = Math.PI / 6;
 let clock = new THREE.Clock();
 let isJourneyStarting = false;
 
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
+
+window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+    mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+});
+
 function animate() {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
     
     if (!isJourneyStarting) {
-        capsuleGroup.position.y += Math.sin(t * 2) * 0.005;
+        // Continuous float & spin
+        capsuleGroup.position.y = Math.sin(t * 2) * 0.1;
         capsuleGroup.rotation.y += 0.005;
+        
+        // Mouse Parallax applied to parent to avoid fighting ScrollTrigger
+        targetX = mouseX;
+        targetY = mouseY;
+        parentGroup.rotation.y += (targetX - parentGroup.rotation.y) * 0.05;
+        parentGroup.rotation.x += (targetY - parentGroup.rotation.x) * 0.05;
     }
     
     renderer.render(scene, camera);
@@ -128,14 +149,20 @@ tl.to(bottomPart.position, { y: 0, ease: "power1.inOut" }, 0.66);
 
 // HTML Elements
 gsap.utils.toArray('.stagger-text').forEach((elem, i) => {
-    gsap.from(elem, { y: 50, opacity: 0, duration: 1, ease: "power3.out", delay: i * 0.2 });
+    gsap.fromTo(elem, 
+        { y: 60, opacity: 0, clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' }, 
+        { y: 0, opacity: 1, clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1.2, ease: "power4.out", delay: i * 0.15 }
+    );
 });
 
 gsap.utils.toArray('.slide-up').forEach((elem) => {
-    gsap.from(elem, {
-        scrollTrigger: { trigger: elem, start: "top 80%", toggleActions: "play none none reverse" },
-        y: 60, opacity: 0, duration: 1, ease: "power3.out"
-    });
+    gsap.fromTo(elem, 
+        { y: 80, opacity: 0, scale: 0.95 },
+        {
+            scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" },
+            y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power4.out"
+        }
+    );
 });
 
 // --- Journey Transition ---

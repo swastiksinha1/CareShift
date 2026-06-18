@@ -27,6 +27,88 @@
 }
 
 body {
+    cursor: none; /* Hide default cursor */
+}
+
+/* --- Cinematic Overlays --- */
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.04;
+}
+
+.ambient-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+.orb-1 {
+    width: 50vw;
+    height: 50vw;
+    top: -20vw;
+    left: -10vw;
+    background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
+}
+
+.orb-2 {
+    width: 60vw;
+    height: 60vw;
+    bottom: -30vw;
+    right: -10vw;
+    background: radial-gradient(circle, rgba(96,165,250,0.1) 0%, transparent 70%);
+}
+
+/* --- Custom Cursor --- */
+.cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s;
+}
+
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-color);
+    mix-blend-mode: difference;
+}
+
+.cursor-ring {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--accent-color);
+    opacity: 0.5;
+}
+
+.cursor-hover .cursor-dot {
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+}
+
+.cursor-hover .cursor-ring {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+}
+
+a, button, .chip, .barrier-card, input {
+    cursor: none;
+}
+
+body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);

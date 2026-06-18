@@ -6,12 +6,22 @@ function updateSlides() {
     document.querySelectorAll('.slide').forEach((slide, index) => {
         if (index + 1 === currentSlide) {
             slide.classList.add('active');
-            gsap.fromTo(slide.querySelector('.slide-content') || slide.querySelector('.chat-container'), 
-                { y: 50, opacity: 0 }, 
-                { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }
+            gsap.fromTo(slide,
+                { scale: 1.1, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 1, ease: "power4.out" }
             );
-        } else {
-            slide.classList.remove('active');
+            const content = slide.querySelector('.slide-content') || slide.querySelector('.chat-container');
+            if (content) {
+                gsap.fromTo(content,
+                    { y: 60, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 1.2, ease: "power4.out", delay: 0.2 }
+                );
+            }
+        } else if (slide.classList.contains('active')) {
+            gsap.to(slide, {
+                scale: 0.95, opacity: 0, duration: 0.6, ease: "power3.in",
+                onComplete: () => slide.classList.remove('active')
+            });
         }
     });
 
@@ -30,12 +40,22 @@ function updateSlides() {
     const progFill = document.getElementById('mainProgFill');
     const progText = document.getElementById('progText');
     if (progFill && progText) {
-        progText.textContent = currentSlide;
+        gsap.to(progText, { y: -5, opacity: 0, duration: 0.2, onComplete: () => {
+            progText.textContent = currentSlide;
+            gsap.fromTo(progText, { y: 5, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(2)" });
+        }});
+
         // Circle circumference = 2 * Math.PI * 22 = ~138.23
         const c = 138.23;
         const ratio = currentSlide / totalSlides;
         const offset = c - (ratio * c);
-        progFill.style.strokeDashoffset = offset;
+        
+        gsap.to(progFill, { strokeDashoffset: offset, duration: 1, ease: "power3.out" });
+        
+        gsap.fromTo('.progress-ring-container', 
+            { scale: 1.15, filter: 'drop-shadow(0 0 15px rgba(14,165,233,0.4))' }, 
+            { scale: 1, filter: 'drop-shadow(0 0 0px rgba(14,165,233,0))', duration: 1, ease: "power2.out" }
+        );
     }
 }
 
@@ -147,6 +167,12 @@ function addBubble(html, who, customClass=''){
   b.innerHTML = `<div class="avatar">${avatar}</div><div class="${msgClass}"><p>${html}</p></div>`;
   chatLog.appendChild(b);
   chatLog.scrollTop = chatLog.scrollHeight;
+  
+  gsap.fromTo(b, 
+      { scale: 0.8, opacity: 0, y: 20 },
+      { scale: 1, opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.5)" }
+  );
+  
   return b;
 }
 
@@ -224,6 +250,7 @@ function renderRcQuestions() {
             const btn = document.createElement('div');
             btn.className = 'rc-option'; btn.textContent = opt;
             btn.onclick = () => {
+                gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "elastic.out(1, 0.4)" });
                 qDiv.querySelectorAll('.rc-option').forEach(el => el.classList.remove('selected'));
                 btn.classList.add('selected');
                 if (index + 1 < rcQuestions.length) {
