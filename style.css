@@ -110,7 +110,7 @@ a, button, .chip, .barrier-card, input {
 
 body {
     margin: 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-x: hidden;
@@ -118,9 +118,8 @@ body {
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-h1, h2, h3, .logo {
-    font-family: 'Clash Display', sans-serif;
-    font-weight: 600;
+h1, h2, h3 {
+    font-family: 'Bebas Neue', sans-serif;
 }
 
 .theme-toggle {
