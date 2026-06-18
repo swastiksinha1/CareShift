@@ -175,26 +175,31 @@ window.startJourney = function(e) {
     ScrollTrigger.getAll().forEach(t => t.kill());
     tl.kill();
 
+    const overlay = document.getElementById('whiteout');
     const transitionTl = gsap.timeline({
         onComplete: () => {
             window.location.href = 'journey.html';
         }
     });
 
-    // Fade out HTML
-    transitionTl.to('main', { opacity: 0, duration: 0.4, ease: "power2.inOut" }, 0);
+    // 1. Fade out HTML text instantly
+    transitionTl.to('main', { opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
 
-    // Close pill halves if broken
-    transitionTl.to(topPart.position,    { y: 0, duration: 0.4, ease: "power2.inOut" }, 0);
-    transitionTl.to(bottomPart.position, { y: 0, duration: 0.4, ease: "power2.inOut" }, 0);
+    // 2. Close pill halves if broken
+    transitionTl.to(topPart.position,    { y: 0, duration: 0.3, ease: "power2.out" }, 0);
+    transitionTl.to(bottomPart.position, { y: 0, duration: 0.3, ease: "power2.out" }, 0);
 
-    // Snap to center & scale up to engulf screen
-    transitionTl.to(capsuleGroup.position, { x: 0, y: 0, z: 0, duration: 1.2, ease: "power2.inOut" }, 0);
-    transitionTl.to(capsuleGroup.scale,    { x: 5, y: 5, z: 5, duration: 1.2, ease: "power3.in" }, 0);
-    transitionTl.to(capsuleGroup.rotation, { x: "+=6.28", y: "+=12.56", duration: 1.2, ease: "power2.inOut" }, 0);
+    // 3. Snap pill to dead center quickly with a couple of spins
+    transitionTl.to(capsuleGroup.position, { x: 0, y: 0, z: 0, duration: 0.7, ease: "power3.out" }, 0);
+    transitionTl.to(capsuleGroup.rotation, { x: "+=6.28", y: "+=6.28", duration: 0.7, ease: "power2.inOut" }, 0);
 
-    // Fog closes in to hide the seam before page switch
-    transitionTl.to(scene.fog, { near: 0.1, far: 3, duration: 0.8, ease: "power2.in" }, 0.5);
+    // 4. Pure CSS overlay flash — zero 3D cost, covers screen instantly
+    transitionTl.call(() => {
+        overlay.style.opacity = '1';
+    }, [], 0.6);
+
+    // 5. Wait for the CSS 0.5s transition to finish before navigating
+    transitionTl.to({}, { duration: 0.55 }, 0.6);
 };
 
 // Reload on bfcache restore (back button) so animations are fresh

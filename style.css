@@ -159,6 +159,16 @@ h1, h2, h3 {
     contain: strict;
 }
 
+#whiteout {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: #0ea5e9;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
 nav {
     position: fixed;
     top: 0;
