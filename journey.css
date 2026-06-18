@@ -173,9 +173,9 @@ body {
     transition: opacity 0.8s ease, visibility 0.8s ease;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 2rem 5%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .slide.active {
@@ -187,6 +187,8 @@ body {
     max-width: 1000px;
     width: 100%;
     text-align: center;
+    margin: auto;
+    padding: 8rem 5% 4rem;
 }
 
 h2 {
