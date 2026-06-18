@@ -6,6 +6,7 @@
     <title>CareShift - The Journey</title>
     <link rel="stylesheet" href="journey.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="theme.js"></script>
     <style>
         /* Custom Saathi Content Styles applied to Journey */
         .chips { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; justify-content:center; }
@@ -129,7 +130,10 @@
         <button class="tab-btn" onclick="goToSlide(6)">6. Specialist</button>
         <button class="tab-btn" onclick="goToSlide(7)">7. Community</button>
         <button class="tab-btn" onclick="goToSlide(8)">8. Resources</button>
-        <a href="index.html" class="tab-btn exit-btn">Exit</a>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode" style="margin-left: auto;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <a href="index.html" class="tab-btn exit-btn" style="margin-left: 0.5rem;">Exit</a>
     </div>
 
     <div class="slides-container">

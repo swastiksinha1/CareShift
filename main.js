@@ -4,7 +4,8 @@ gsap.registerPlugin(ScrollTrigger);
 // --- Three.js Setup ---
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xf8fafc, 5, 15);
+const isInitiallyDark = document.documentElement.classList.contains('dark-mode');
+scene.fog = new THREE.Fog(isInitiallyDark ? 0x0f172a : 0xf8fafc, 5, 15);
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.z = 8;
@@ -13,6 +14,17 @@ const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 container.appendChild(renderer.domElement);
+
+// Listen for theme toggle
+window.addEventListener('themeChanged', (e) => {
+    const color = e.detail.isDark ? 0x0f172a : 0xf8fafc;
+    gsap.to(scene.fog.color, {
+        r: new THREE.Color(color).r,
+        g: new THREE.Color(color).g,
+        b: new THREE.Color(color).b,
+        duration: 0.4
+    });
+});
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);

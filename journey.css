@@ -4,6 +4,18 @@
     --accent-color: #0ea5e9;
     --accent-dark: #0284c7;
     --white: #ffffff;
+    --card-bg: #ffffff;
+    --border-color: rgba(0, 0, 0, 0.05);
+}
+
+:root.dark-mode {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --accent-color: #3b82f6;
+    --accent-dark: #60a5fa;
+    --white: #1e293b;
+    --card-bg: #1e293b;
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -16,8 +28,29 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    overflow: hidden; /* Slide presentation mode */
-    cursor: default;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Base override for all path cards / generic cards */
+.path-card, .story-card, .res-card, .masonry-card, .rc-question {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.chip {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--border-color) !important;
+}
+.chip.active {
+    background: var(--accent-color) !important;
+}
+
+.journey-tabs {
+    background: linear-gradient(to bottom, var(--bg-color) 70%, transparent) !important;
 }
 
 .slides-container {

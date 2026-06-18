@@ -4,6 +4,18 @@
     --accent-color: #0ea5e9;
     --accent-dark: #0284c7;
     --white: #ffffff;
+    --card-bg: #ffffff;
+    --border-color: rgba(0, 0, 0, 0.05);
+}
+
+:root.dark-mode {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --accent-color: #3b82f6;
+    --accent-dark: #60a5fa;
+    --white: #1e293b;
+    --card-bg: #1e293b;
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -17,7 +29,32 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
     cursor: default;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--border-color);
+}
+
+/* Adjust navbar for dark mode */
+.dark-mode nav {
+    background: rgba(30, 41, 59, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #canvas-container {
