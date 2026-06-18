@@ -10,9 +10,9 @@ scene.fog = new THREE.Fog(isInitiallyDark ? 0x050505 : 0xf8fafc, 5, 15);
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.z = 8;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 container.appendChild(renderer.domElement);
 
 // Listen for theme toggle
@@ -42,17 +42,17 @@ scene.add(backLight);
 const capsuleGroup = new THREE.Group();
 scene.add(capsuleGroup);
 
-const mat1 = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.2, clearcoat: 1.0 });
-const mat2 = new THREE.MeshPhysicalMaterial({ color: 0x0ea5e9, metalness: 0.1, roughness: 0.2, clearcoat: 1.0 });
+const mat1 = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.2, roughness: 0.15 });
+const mat2 = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, metalness: 0.2, roughness: 0.15 });
 
 const radius = 0.8;
 const height = 1.6;
 
 // Top half
-const topGeo = new THREE.CylinderGeometry(radius, radius, height/2, 32);
+const topGeo = new THREE.CylinderGeometry(radius, radius, height/2, 16);
 topGeo.translate(0, height/4, 0);
 const topMesh = new THREE.Mesh(topGeo, mat2);
-const topDomeGeo = new THREE.SphereGeometry(radius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+const topDomeGeo = new THREE.SphereGeometry(radius, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2);
 topDomeGeo.translate(0, height/2, 0);
 const topDomeMesh = new THREE.Mesh(topDomeGeo, mat2);
 const topPart = new THREE.Group();
@@ -60,10 +60,10 @@ topPart.add(topMesh);
 topPart.add(topDomeMesh);
 
 // Bottom half
-const bottomGeo = new THREE.CylinderGeometry(radius, radius, height/2, 32);
+const bottomGeo = new THREE.CylinderGeometry(radius, radius, height/2, 16);
 bottomGeo.translate(0, -height/4, 0);
 const bottomMesh = new THREE.Mesh(bottomGeo, mat1);
-const bottomDomeGeo = new THREE.SphereGeometry(radius, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+const bottomDomeGeo = new THREE.SphereGeometry(radius, 16, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
 bottomDomeGeo.translate(0, -height/2, 0);
 const bottomDomeMesh = new THREE.Mesh(bottomDomeGeo, mat1);
 const bottomPart = new THREE.Group();

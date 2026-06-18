@@ -45,26 +45,27 @@ body {
 .ambient-orb {
     position: fixed;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(60px);
     z-index: -1;
     pointer-events: none;
     transition: opacity 1s ease;
+    will-change: opacity;
 }
 
 .orb-1 {
-    width: 50vw;
-    height: 50vw;
-    top: -20vw;
-    left: -10vw;
-    background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
+    width: 40vw;
+    height: 40vw;
+    top: -15vw;
+    left: -5vw;
+    background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%);
 }
 
 .orb-2 {
-    width: 60vw;
-    height: 60vw;
-    bottom: -30vw;
-    right: -10vw;
-    background: radial-gradient(circle, rgba(96,165,250,0.1) 0%, transparent 70%);
+    width: 50vw;
+    height: 50vw;
+    bottom: -25vw;
+    right: -5vw;
+    background: radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%);
 }
 
 /* --- Custom Cursor --- */
@@ -154,6 +155,8 @@ h1, h2, h3 {
     height: 100vh;
     z-index: 0;
     pointer-events: none;
+    will-change: transform;
+    contain: strict;
 }
 
 nav {
