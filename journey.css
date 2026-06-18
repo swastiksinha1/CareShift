@@ -35,6 +35,24 @@ body {
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--border-color);
+}
+
 /* Base override for all path cards / generic cards */
 .path-card, .story-card, .res-card, .masonry-card, .rc-question {
     background: var(--card-bg) !important;
