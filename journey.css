@@ -1,9 +1,10 @@
 :root {
-    --bg-color: #f8fafc;
-    --text-color: #0f172a;
-    --accent-color: #0ea5e9;
-    --accent-dark: #0284c7;
-    --white: #ffffff;
+    --black: #050508;
+    --white: #f0ede6;
+    --bg-color: var(--black);
+    --text-color: var(--white);
+    --accent-color: #3b82f6;
+    --accent-dark: #2563eb;
 }
 
 * {
@@ -13,9 +14,9 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--text-color); /* Dark cinematic background for journey */
-    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     overflow: hidden; /* Slide presentation mode */
     cursor: default;
 }
@@ -54,11 +55,12 @@ body {
 }
 
 h2 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 5rem);
     line-height: 1.1;
-    font-weight: 800;
+    font-weight: 400;
     margin-bottom: 1rem;
-    letter-spacing: -1.5px;
+    letter-spacing: 2px;
 }
 
 p {

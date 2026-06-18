@@ -1,103 +1,272 @@
 let currentSlide = 1;
 const totalSlides = 3;
 
-// Entrance animation for the first slide
-window.onload = () => {
-    gsap.from(".slide-barriers .barrier-card", {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
-        delay: 0.5
+// Navigation
+function updateSlides() {
+    document.querySelectorAll('.slide').forEach((slide, index) => {
+        if (index + 1 === currentSlide) {
+            slide.classList.add('active');
+            gsap.fromTo(slide.querySelector('.slide-content') || slide.querySelector('.chat-container'), 
+                { y: 50, opacity: 0 }, 
+                { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }
+            );
+        } else {
+            slide.classList.remove('active');
+        }
     });
-};
-
-function goToSlide(slideNum) {
-    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-    document.getElementById(`slide-${slideNum}`).classList.add('active');
-    
-    // Trigger animations for specific slides
-    if (slideNum === 2) {
-        gsap.from(".story-card", {
-            y: 50, opacity: 0, duration: 0.8, stagger: 0.2, ease: "power3.out"
-        });
-    } else if (slideNum === 3) {
-        gsap.from(".chat-header, .bot-message", {
-            y: 20, opacity: 0, duration: 0.8, stagger: 0.2, ease: "power3.out"
-        });
-    }
-    
-    currentSlide = slideNum;
 }
 
-function nextSlide(e) {
-    if(e) e.stopPropagation();
+function nextSlide() {
     if (currentSlide < totalSlides) {
-        goToSlide(currentSlide + 1);
+        currentSlide++;
+        updateSlides();
     }
 }
 
-function prevSlide(e) {
-    if(e) e.stopPropagation();
+function prevSlide() {
     if (currentSlide > 1) {
-        goToSlide(currentSlide - 1);
+        currentSlide--;
+        updateSlides();
     }
 }
 
-// Barrier Interactions
-window.toggleBarrier = function(card) {
-    card.classList.toggle('flipped');
+// --- Barrier Logic Extracted from Saathi ---
+const barriers = [
+  {
+    id:'fear', label:'Fear of diagnosis',
+    title:'The fear is doing its job — just not for you',
+    ack:"Not knowing can feel safer than knowing. That's a normal way for a brain to protect itself in the short term — but it doesn't make the worry go away, it just postpones it.",
+    step:'Tiny next step: try a 5-minute anonymous symptom check before you commit to anything bigger. You can stop after.',
+    res:'Free teleconsults are available via government platforms like eSanjeevani — no clinic visit required.'
+  },
+  {
+    id:'stigma', label:'Social stigma',
+    title:'Stigma lives in your neighbourhood, not in your blood test',
+    ack:"What people might say isn't really about your health — it's about their comfort. Your health doesn't owe anyone that comfort.",
+    step:'Tiny next step: look for a remote-first or phone consult, so no one in your building has to know you went anywhere.',
+    res:'Tele-MANAS (14416) and most teleconsult apps never require you to be seen walking in.'
+  },
+  {
+    id:'masculinity', label:'Masculinity norms',
+    title:'"I\'ll be fine" was never proof of strength',
+    ack:"Somewhere along the way, brushing it off became the only acceptable answer. Real strength is acting on a problem before it controls you — not pretending it isn't there.",
+    step:"Tiny next step: tell one person, not a doctor — just one person you trust. Saying it out loud is usually the hardest 10% of the whole problem.",
+    res:"For context: roughly 7 in 10 callers to India's KIRAN mental health helpline are men. You'd be in good company."
+  },
+  {
+    id:'cost', label:'Cost concerns',
+    title:"Worrying about the bill before the diagnosis is exhausting",
+    ack:"That worry is completely rational — and waiting on it usually makes the eventual bill bigger, not smaller.",
+    step:'Tiny next step: check if you already qualify for free treatment before assuming you can\'t afford it.',
+    res:'Ayushman Bharat (PM-JAY), 14555 — covers treatment at empanelled hospitals at zero cost for eligible families.'
+  },
+  {
+    id:'time', label:'Lack of time',
+    title:"This isn't denial. It's triage, and health lost today's round",
+    ack:"You're juggling twelve things and health didn't win the slot today. That's a scheduling problem, not a character flaw.",
+    step:'Tiny next step: block 10 minutes, not a day. A phone triage call fits inside a lunch break.',
+    res:'National Health Helpline, 104 — general advice without leaving your desk.'
+  },
+  {
+    id:'denial', label:'Denial & uncertainty',
+    title:'"Probably nothing" is doing a lot of heavy lifting',
+    ack:"Maybe it is nothing. The only way to actually stop wondering is to check, once, instead of carrying the question around.",
+    step:"Tiny next step: set a 48-hour rule with yourself. If it's still there in 2 days, you call — write the date down now.",
+    res:'A 2-day deadline turns an open-ended worry into a closed one.'
+  }
+];
+
+const chipRow = document.getElementById('chipRow');
+const pathwayRow = document.getElementById('pathwayRow');
+const selected = new Set();
+
+if(chipRow && pathwayRow) {
+    barriers.forEach(b=>{
+      const chip = document.createElement('div');
+      chip.className='chip'; chip.textContent=b.label; chip.dataset.id=b.id;
+      chip.onclick=()=>{
+        chip.classList.toggle('active');
+        selected.has(b.id) ? selected.delete(b.id) : selected.add(b.id);
+        renderPathways();
+      };
+      chipRow.appendChild(chip);
+    });
+
+    function renderPathways(){
+      pathwayRow.innerHTML='';
+      if(selected.size===0){
+        pathwayRow.innerHTML = '<div class="empty-state">Pick at least one above — most people end up picking three. Your personal pathway will appear right here.</div>';
+        return;
+      }
+      barriers.filter(b=>selected.has(b.id)).forEach(b=>{
+        const card=document.createElement('div');
+        card.className='path-card';
+        card.innerHTML = `<h3>${b.title}</h3><p>${b.ack}</p><div class="path-step">${b.step}</div><div class="path-res">${b.res}</div>`;
+        pathwayRow.appendChild(card);
+      });
+    }
+    renderPathways();
+}
+
+// --- Saathi Chat Engine ---
+const chatLog = document.getElementById('chat-body');
+const chatInput = document.getElementById('chat-input');
+const quickRow = document.getElementById('quickRow');
+
+const quickPrompts = [
+  "I think something's wrong but I'm scared to check",
+  "I don't want anyone to know",
+  "I can't afford a doctor right now",
+  "I keep telling myself it's fine"
+];
+if(quickRow) {
+    quickPrompts.forEach(q=>{
+      const btn = document.createElement('button'); 
+      btn.textContent=q;
+      btn.onclick=()=>{ chatInput.value=q; sendMessage(); };
+      quickRow.appendChild(btn);
+    });
+}
+
+const CRISIS_WORDS = ['suicide','kill myself','end my life','end it all','dont want to live',"don't want to live",'no reason to live','self harm','self-harm','harm myself','hurt myself','better off dead','cant go on',"can't go on"];
+
+const CATEGORIES = [
+  { id:'crisis', words:CRISIS_WORDS },
+  { id:'fear', words:['scared','afraid','fear','dont want to know',"don't want to know",'worried it','what if it','diagnosis','test result'] },
+  { id:'stigma', words:['what will people say','log kya kahenge','judge','judged','neighbour','neighbor','someone sees','reputation','shame','embarrass'] },
+  { id:'masculinity', words:['man up',"i'll be fine",'ill be fine','men dont','men don\'t','weak','be strong','handle it myself','crying'] },
+  { id:'cost', words:['afford','money','cost','expensive','bill','cant pay',"can't pay",'no insurance','cheap'] },
+  { id:'time', words:['no time','too busy',"don't have time",'dont have time','work','schedule','day off'] },
+  { id:'denial', words:['probably nothing',"it's fine",'its fine','not that serious','overreacting','just stress','sure its ok',"sure it's ok"] },
+  { id:'mental', words:['anxious','anxiety','depressed','depression','panic','overwhelmed','cant sleep',"can't sleep",'stressed'] }
+];
+
+const RESPONSES = {
+  crisis: [
+    `<b>I hear how heavy this is — and I want you talking to a real person right now, not a screen.</b>Please call <b>Tele-MANAS at 14416</b> or <b>KIRAN at 1800-599-0019</b> — both are free, run by trained counsellors, available right now in many languages. If you're in immediate danger, call <b>108</b>. You don't have to explain yourself first. Just dial.`
+  ],
+  fear: [
+    "That hesitation makes sense — not knowing can feel safer than knowing, even though it usually isn't. You don't have to commit to a diagnosis today. A 5-minute anonymous symptom check is a much smaller ask than 'go to the hospital.' Want me to point you to a no-pressure first step?",
+    "Fear of the answer is one of the most common reasons people wait — you're not being dramatic. What if the goal today isn't 'get diagnosed' but just 'ask one question to one helpline'? That's a much smaller door to walk through."
+  ],
+  stigma: [
+    "What people might say is about their comfort, not your health. A lot of people solve this exact worry with a remote or phone consult — nobody has to see you walk anywhere. Would that change things for you?",
+    "Stigma is loud, but it's also local — it doesn't follow you onto a phone call. Tele-MANAS (14416) talks to people in total privacy, in their own language, every single day."
+  ],
+  masculinity: [
+    "Brushing it off was never proof of strength — acting on it before it gets worse is. For what it's worth, roughly 7 in 10 callers to India's KIRAN helpline are men. You'd be in good company, not an exception.",
+    "You don't have to call yourself 'sick' to make a call. Try telling just one person you trust — not a doctor yet. Saying it out loud tends to be the hardest 10% of this whole thing."
+  ],
+  cost: [
+    "Worrying about the bill before you even know what's wrong is exhausting, and it's a rational worry — but waiting usually makes the eventual cost bigger, not smaller. Check Ayushman Bharat (PM-JAY) at 14555 before assuming you can't afford care — many families already qualify and don't know it.",
+    "Cost is a real barrier, not an excuse. One call to 14555 can tell you in minutes whether treatment is already free for your family under PM-JAY."
+  ],
+  time: [
+    "This sounds less like avoidance and more like triage — health just hasn't won a time slot yet. A phone helpline call is 10 minutes, not a day off. The National Health Helpline (104) is built for exactly that.",
+    "You don't need a free day. You need a free 10 minutes. Could you find that today, even just to ask one question?"
+  ],
+  denial: [
+    "'Probably nothing' is doing a lot of heavy lifting right now. Here's a trick: give yourself a 48-hour rule. If it's still there in two days, you call — no more re-deciding every morning.",
+    "Maybe it really is nothing. The only way to actually stop wondering is to check once — carrying the question around is its own kind of tiring."
+  ],
+  mental: [
+    "That sounds like a lot to be carrying alone. Tele-MANAS (14416) is a free, confidential government helpline, available right now, in most Indian languages — you don't need a 'serious enough' reason to call.",
+    "Feeling overwhelmed is a real, valid reason to reach out — not a sign you're being too much. A counsellor at 14416 is trained exactly for this conversation."
+  ],
+  fallback: [
+    "Thank you for putting that into words — that's often the hardest part. Can you tell me a bit more about what's making this feel hard to act on: fear, cost, time, or something else?",
+    "I'm listening. If you had to name the one thing actually stopping you from making a call today, what would it be?"
+  ]
 };
 
-// CareBot Interactions
-const chatBody = document.getElementById('chat-body');
-const chatInput = document.getElementById('chat-input');
+let fallbackIdx = 0;
+function classify(text){
+  const t = text.toLowerCase();
+  for(const cat of CATEGORIES){
+    if(cat.words.some(w=>t.includes(w))) return cat.id;
+  }
+  return 'fallback';
+}
 
-window.handleKeyPress = function(e) {
+function addBubble(html, who){
+  if(!chatLog) return;
+  const b = document.createElement('div');
+  b.className = 'message ' + (who.includes('user') ? 'user-message' : 'bot-message');
+  
+  let avatar = who.includes('user') ? 'U' : 'S';
+  let msgClass = 'msg-content';
+  if(who.includes('crisis')) msgClass += ' crisis';
+
+  b.innerHTML = `
+      <div class="avatar">${avatar}</div>
+      <div class="${msgClass}">
+          <p>${html}</p>
+      </div>
+  `;
+  chatLog.appendChild(b);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return b;
+}
+
+function addTyping(){
+  if(!chatLog) return;
+  const t=document.createElement('div');
+  t.className='message bot-message'; t.id='typingNow';
+  t.innerHTML=`
+      <div class="avatar">S</div>
+      <div class="msg-content typing">
+          <span></span><span></span><span></span>
+      </div>
+  `;
+  chatLog.appendChild(t);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function removeTyping(){
+  const t=document.getElementById('typingNow');
+  if(t) t.remove();
+}
+
+function botReply(userText){
+  const cat = classify(userText);
+  addTyping();
+  setTimeout(()=>{
+    removeTyping();
+    if(cat==='crisis'){
+      addBubble(RESPONSES.crisis[0], 'bot crisis');
+      return;
+    }
+    const arr = RESPONSES[cat] || RESPONSES.fallback;
+    let msg;
+    if(cat==='fallback'){
+      msg = RESPONSES.fallback[fallbackIdx % RESPONSES.fallback.length];
+      fallbackIdx++;
+    } else {
+      msg = arr[Math.floor(Math.random()*arr.length)];
+    }
+    addBubble(msg, 'bot');
+  }, 650 + Math.random()*500);
+}
+
+function sendMessage(){
+  if(!chatInput) return;
+  const val = chatInput.value.trim();
+  if(!val) return;
+  addBubble(val.replace(/</g,'&lt;'), 'user');
+  chatInput.value='';
+  botReply(val);
+}
+
+function handleKeyPress(e) {
     if (e.key === 'Enter') {
         sendMessage();
     }
-};
+}
 
-window.sendReply = function(text) {
-    chatInput.value = text;
-    sendMessage();
-};
-
-window.sendMessage = function() {
-    const text = chatInput.value.trim();
-    if (!text) return;
-
-    // Add user message
-    const userMsg = document.createElement('div');
-    userMsg.className = 'message user-message';
-    userMsg.innerHTML = `
-        <div class="avatar">You</div>
-        <div class="msg-content"><p>${text}</p></div>
-    `;
-    chatBody.appendChild(userMsg);
-    chatInput.value = '';
-    
-    // Remove quick replies
-    const quickReplies = document.querySelector('.quick-replies');
-    if(quickReplies) quickReplies.remove();
-
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-    // Bot response
-    setTimeout(() => {
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot-message';
-        
-        botMsg.innerHTML = `
-            <div class="avatar">CB</div>
-            <div class="msg-content"><p>I understand completely. The hesitation is natural, but you are already doing great by just being here and exploring this. We have an anonymous symptom checker available—would you like to try it?</p></div>
-        `;
-        chatBody.appendChild(botMsg);
-        
-        // Flash animation
-        gsap.from(botMsg, { y: 20, opacity: 0, duration: 0.5, ease: "power2.out" });
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }, 1200);
-};
+// Initial initialization
+document.addEventListener('DOMContentLoaded', () => {
+    updateSlides();
+    if(chatLog) {
+        addBubble("Hi — I'm Saathi. You don't need to introduce a symptom or a diagnosis. Just tell me what's making this hard to act on, in your own words.", 'bot');
+    }
+});

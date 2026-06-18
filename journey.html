@@ -5,58 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareShift - The Journey</title>
     <link rel="stylesheet" href="journey.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Saathi Content Styles applied to Journey */
+        .chips { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; justify-content:center; }
+        .chip {
+          font-family:'DM Sans',sans-serif; font-weight:600; font-size:14.5px;
+          padding:13px 20px; border-radius:100px; border:1.5px solid rgba(255,255,255,0.14);
+          background:rgba(255,255,255,0.04); color:var(--white); cursor:pointer;
+          transition:all .15s ease; user-select:none;
+        }
+        .chip:hover { border-color:rgba(255,255,255,0.35); }
+        .chip.active { background:var(--accent-color); color:var(--white); border-color:var(--accent-color); }
+        
+        .pathways { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; margin-top:20px; text-align: left; }
+        .path-card {
+          background:#1a1a22; color:var(--white); border-radius:16px; padding:24px;
+          border: 1px solid rgba(255,255,255,0.1);
+          animation:rise .35s ease both;
+        }
+        @keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        .path-card h3 { font-size:18px; margin-bottom:10px; font-family:'DM Sans', sans-serif; }
+        .path-card p { font-size:14.5px; margin:0 0 14px; opacity:0.8; }
+        .path-step {
+          font-size:13.5px; font-weight:700; padding:10px 12px; border-radius:10px;
+          background:rgba(59,130,246,0.15); color:#60a5fa; margin-bottom:10px;
+        }
+        .path-res { font-family:'Space Mono',monospace; font-size:12px; color:#9ca3af; }
+        .empty-state {
+          border:1.5px dashed rgba(255,255,255,0.14); border-radius:16px; padding:34px; text-align:center;
+          color:#888899; font-size:15px; width:100%;
+        }
+
+        /* Saathi Chat specific styles */
+        .bubble.crisis { background:#450a0a; border:1px solid #dc2626; color:#fca5a5; }
+        .bubble.crisis b { display:block; margin-bottom:4px; color:white; }
+        .typing { display:flex; gap:4px; padding:14px 16px; align-self:flex-start; }
+        .typing span { width:6px; height:6px; border-radius:50%; background:#bbb; animation:tb 1s infinite ease-in-out; }
+        .typing span:nth-child(2) { animation-delay:.15s; } .typing span:nth-child(3) { animation-delay:.3s; }
+        @keyframes tb { 0%,60%,100%{transform:translateY(0);opacity:0.4;} 30%{transform:translateY(-4px);opacity:1;} }
+    </style>
 </head>
 <body>
     <div class="slides-container">
         
-        <!-- Slide 1: Barriers -->
+        <!-- Slide 1: Barriers (Saathi Picker) -->
         <div class="slide slide-barriers active" id="slide-1">
-            <div class="slide-content">
+            <div class="slide-content" style="max-width: 900px;">
                 <h2>What's stopping you today?</h2>
-                <p>Click on what you're feeling. It's safe to be honest here.</p>
+                <p>Pick whatever is true right now. There's no wrong answer, and nothing here gets saved.</p>
                 
-                <div class="barriers-grid">
-                    <div class="barrier-card" onclick="toggleBarrier(this)">
-                        <div class="barrier-inner">
-                            <div class="barrier-front">
-                                <span class="icon">😰</span>
-                                <h3>Fear of Diagnosis</h3>
-                            </div>
-                            <div class="barrier-back">
-                                <p>Knowing early gives you 90% more control. Ignorance doesn't cure.</p>
-                                <button class="btn-small" onclick="nextSlide(event)">Let's Talk</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="barrier-card" onclick="toggleBarrier(this)">
-                        <div class="barrier-inner">
-                            <div class="barrier-front">
-                                <span class="icon">👁️</span>
-                                <h3>Social Stigma</h3>
-                            </div>
-                            <div class="barrier-back">
-                                <p>Your health is yours alone. Our anonymous clinics ensure privacy.</p>
-                                <button class="btn-small" onclick="nextSlide(event)">Get Anonymous Help</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="barrier-card" onclick="toggleBarrier(this)">
-                        <div class="barrier-inner">
-                            <div class="barrier-front">
-                                <span class="icon">💰</span>
-                                <h3>Cost Concerns</h3>
-                            </div>
-                            <div class="barrier-back">
-                                <p>You might be fully covered under Ayushman Bharat.</p>
-                                <button class="btn-small" onclick="nextSlide(event)">Check Eligibility</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="chips" id="chipRow"></div>
+                <div style="font-family:'Space Mono',monospace; font-size:12px; opacity:0.5; margin-bottom:20px;">↑ tap as many as apply</div>
+                <div class="pathways" id="pathwayRow"></div>
+                
             </div>
             <div class="slide-nav">
-                <button onclick="nextSlide()" class="btn-nav">Next &rarr;</button>
+                <button onclick="nextSlide()" class="btn-nav">Continue to Stories &rarr;</button>
             </div>
         </div>
 
@@ -79,39 +84,32 @@
             </div>
             <div class="slide-nav">
                 <button onclick="prevSlide()" class="btn-nav ghost">&larr; Back</button>
-                <button onclick="nextSlide()" class="btn-nav">Talk to CareBot &rarr;</button>
+                <button onclick="nextSlide()" class="btn-nav">Talk to Saathi CareBot &rarr;</button>
             </div>
         </div>
 
-        <!-- Slide 3: CareBot -->
+        <!-- Slide 3: CareBot (Saathi Engine) -->
         <div class="slide slide-carebot" id="slide-3">
             <div class="chat-container">
                 <div class="chat-header">
                     <div class="status-indicator"></div>
                     <div>
-                        <h3>CareBot Companion</h3>
-                        <span class="subtitle">Anonymous & Confidential</span>
+                        <h3 style="color:var(--text-color); font-family:'Bebas Neue',sans-serif; letter-spacing:1px;">Saathi CareBot</h3>
+                        <span class="subtitle" style="color:#64748b;">Anonymous & Confidential</span>
                     </div>
                     <a href="index.html" class="btn-exit">Exit</a>
                 </div>
                 <div class="chat-body" id="chat-body">
-                    <div class="message bot-message">
-                        <div class="avatar">CB</div>
-                        <div class="msg-content">
-                            <p>Hi there. I know taking the first step is hard. What's on your mind today? You don't have to share your name.</p>
-                            <div class="quick-replies">
-                                <button onclick="sendReply('I have a symptom I\'m ignoring.')">I have a symptom I'm ignoring.</button>
-                                <button onclick="sendReply('I\'m worried about the cost.')">I'm worried about the cost.</button>
-                                <button onclick="sendReply('I just feel anxious.')">I just feel anxious.</button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Dynamic Saathi Chat Log -->
                 </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
-                    <button onclick="sendMessage()" class="btn-send">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                    </button>
+                <div class="chat-input-area" style="flex-direction:column; gap:0.5rem;">
+                    <div class="quick-replies" id="quickRow"></div>
+                    <div style="display:flex; gap:1rem; width:100%;">
+                        <input type="text" id="chat-input" placeholder="Type what's on your mind..." onkeypress="handleKeyPress(event)" style="background:var(--bg-color); color:var(--text-color);">
+                        <button onclick="sendMessage()" class="btn-send">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

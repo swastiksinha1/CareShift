@@ -104,7 +104,12 @@ tl.to(capsuleGroup.rotation, { x: Math.PI * 2, z: -Math.PI / 4, ease: "power1.in
 tl.to(topPart.position, { y: 0.5, ease: "power1.inOut" }, 0.3);
 tl.to(bottomPart.position, { y: -0.5, ease: "power1.inOut" }, 0.3);
 
-tl.to(capsuleGroup.position, { x: 0, y: 0, z: -2, ease: "power1.inOut" }, 0.6);
+tl.to(capsuleGroup.position, { 
+    x: 0, 
+    y: 0, 
+    z: 2, 
+    ease: "power1.inOut" 
+}, 0.6);
 tl.to(topPart.position, { y: 0, ease: "power1.inOut" }, 0.6);
 tl.to(bottomPart.position, { y: 0, ease: "power1.inOut" }, 0.6);
 tl.to(capsuleGroup.rotation, { x: Math.PI / 2, y: Math.PI * 2, z: 0, ease: "power1.inOut" }, 0.6);
