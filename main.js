@@ -98,21 +98,21 @@ let tl = gsap.timeline({
     }
 });
 
-tl.to(capsuleGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: window.innerWidth < 768 ? 2 : 0, ease: "power1.inOut" }, 0);
-tl.to(capsuleGroup.rotation, { x: Math.PI * 2, z: -Math.PI / 4, ease: "power1.inOut" }, 0);
+// 1. Move left for "Fear of Diagnosis"
+tl.to(capsuleGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: 0, z: 0, ease: "power1.inOut" }, 0);
+tl.to(capsuleGroup.rotation, { x: Math.PI, y: Math.PI / 2, z: 0, ease: "power1.inOut" }, 0);
 
-tl.to(topPart.position, { y: 0.5, ease: "power1.inOut" }, 0.3);
-tl.to(bottomPart.position, { y: -0.5, ease: "power1.inOut" }, 0.3);
+// 2. Center and break apart for "Breaking the Stigma"
+tl.to(capsuleGroup.position, { x: 0, y: 0, z: 2, ease: "power1.inOut" }, 0.33);
+tl.to(capsuleGroup.rotation, { x: Math.PI * 1.5, y: Math.PI, z: 0, ease: "power1.inOut" }, 0.33);
+tl.to(topPart.position, { y: 0.6, ease: "power1.inOut" }, 0.33);
+tl.to(bottomPart.position, { y: -0.6, ease: "power1.inOut" }, 0.33);
 
-tl.to(capsuleGroup.position, { 
-    x: 0, 
-    y: 0, 
-    z: 2, 
-    ease: "power1.inOut" 
-}, 0.6);
-tl.to(topPart.position, { y: 0, ease: "power1.inOut" }, 0.6);
-tl.to(bottomPart.position, { y: 0, ease: "power1.inOut" }, 0.6);
-tl.to(capsuleGroup.rotation, { x: Math.PI / 2, y: Math.PI * 2, z: 0, ease: "power1.inOut" }, 0.6);
+// 3. Move left and close for "CareShift Solution"
+tl.to(capsuleGroup.position, { x: window.innerWidth < 768 ? 0 : -2, y: 0, z: 0, ease: "power1.inOut" }, 0.66);
+tl.to(capsuleGroup.rotation, { x: Math.PI * 2, y: Math.PI * 1.5, z: Math.PI / 4, ease: "power1.inOut" }, 0.66);
+tl.to(topPart.position, { y: 0, ease: "power1.inOut" }, 0.66);
+tl.to(bottomPart.position, { y: 0, ease: "power1.inOut" }, 0.66);
 
 // HTML Elements
 gsap.utils.toArray('.stagger-text').forEach((elem, i) => {
