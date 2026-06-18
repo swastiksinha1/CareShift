@@ -10,14 +10,14 @@
 }
 
 :root.dark-mode {
-    --bg-color: #0f172a;
+    --bg-color: #050505;
     --text-color: #f8fafc;
     --accent-color: #3b82f6;
     --accent-dark: #60a5fa;
     --white: #ffffff;
-    --card-bg: #1e293b;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --glass-bg: rgba(30, 41, 59, 0.7);
+    --card-bg: #111111;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --glass-bg: rgba(10, 10, 10, 0.7);
 }
 
 * {

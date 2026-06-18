@@ -5,7 +5,7 @@ gsap.registerPlugin(ScrollTrigger);
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
 const isInitiallyDark = document.documentElement.classList.contains('dark-mode');
-scene.fog = new THREE.Fog(isInitiallyDark ? 0x0f172a : 0xf8fafc, 5, 15);
+scene.fog = new THREE.Fog(isInitiallyDark ? 0x050505 : 0xf8fafc, 5, 15);
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.z = 8;
@@ -17,7 +17,7 @@ container.appendChild(renderer.domElement);
 
 // Listen for theme toggle
 window.addEventListener('themeChanged', (e) => {
-    const color = e.detail.isDark ? 0x0f172a : 0xf8fafc;
+    const color = e.detail.isDark ? 0x050505 : 0xf8fafc;
     gsap.to(scene.fog.color, {
         r: new THREE.Color(color).r,
         g: new THREE.Color(color).g,
