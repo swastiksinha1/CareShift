@@ -225,3 +225,10 @@ window.startJourney = function(e) {
         ease: "power2.in"
     }, 0.6);
 };
+
+// Handle Browser Back Button (bfcache)
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted && isJourneyStarting) {
+        window.location.reload();
+    }
+});
