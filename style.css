@@ -44,6 +44,7 @@ nav {
 }
 
 .logo {
+    font-family: 'Outfit', sans-serif;
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -1px;
@@ -95,14 +96,16 @@ nav {
 }
 
 h1 {
+    font-family: 'Outfit', sans-serif;
     font-size: clamp(3rem, 6vw, 6rem);
     line-height: 1.1;
-    font-weight: 800;
+    font-weight: 900;
     margin-bottom: 1.5rem;
     letter-spacing: -2px;
 }
 
 h2 {
+    font-family: 'Outfit', sans-serif;
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     line-height: 1.1;
     font-weight: 800;
