@@ -170,8 +170,9 @@ window.startJourney = function(e) {
     if(e) e.preventDefault();
     isJourneyStarting = true;
     
-    // Stop scroll interactions
+    // Stop scroll interactions and kill scroll trigger to prevent fighting
     document.body.style.overflow = 'hidden';
+    if (tl) tl.kill();
     
     const transitionTl = gsap.timeline({
         onComplete: () => {
@@ -179,26 +180,32 @@ window.startJourney = function(e) {
         }
     });
 
-    // Animate pill flying into camera
+    // Fade out HTML content immediately
+    transitionTl.to('main', { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 0);
+
+    // Animate pill popping into center
     transitionTl.to(capsuleGroup.position, {
-        z: camera.position.z - 0.5,
         x: 0,
         y: 0,
-        duration: 1.5,
-        ease: "power2.in"
+        z: 6, // Pop towards camera
+        duration: 1.2,
+        ease: "back.out(1.2)"
     }, 0);
     
+    // Spin rapidly
     transitionTl.to(capsuleGroup.rotation, {
-        x: Math.PI * 4,
+        x: Math.PI * 2,
         y: Math.PI * 4,
-        duration: 1.5,
-        ease: "power2.in"
+        z: 0,
+        duration: 1.2,
+        ease: "power3.inOut"
     }, 0);
 
-    // Fade screen to white
-    transitionTl.to("#whiteout", {
-        opacity: 1,
-        duration: 0.5,
-        ease: "power1.in"
-    }, 1.0);
+    // Fade into the void
+    transitionTl.to(scene.fog, {
+        near: 0.1,
+        far: 2,
+        duration: 0.8,
+        ease: "power2.in"
+    }, 0.6);
 };
