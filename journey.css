@@ -50,7 +50,8 @@ body {
 }
 
 .journey-tabs {
-    background: linear-gradient(to bottom, var(--bg-color) 70%, transparent) !important;
+    background: var(--bg-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
 }
 
 .slides-container {
@@ -194,7 +195,7 @@ p {
 }
 
 .btn-small {
-    background: white;
+    background: var(--card-bg);
     color: var(--accent-color);
     border: none;
     padding: 0.5rem 1.5rem;
@@ -247,9 +248,9 @@ p {
 }
 
 .chat-header {
-    background: white;
+    background: var(--card-bg);
     padding: 1.5rem 3rem;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -311,7 +312,7 @@ p {
 }
 
 .msg-content {
-    background: white;
+    background: var(--card-bg);
     padding: 1.2rem;
     border-radius: 0 16px 16px 16px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.02);
@@ -351,8 +352,8 @@ p {
 
 .chat-input-area {
     padding: 2rem 20%;
-    background: white;
-    border-top: 1px solid rgba(0,0,0,0.05);
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
     display: flex;
     gap: 1rem;
 }
@@ -360,7 +361,7 @@ p {
 #chat-input {
     flex: 1;
     padding: 1rem 1.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 30px;
     outline: none;
     font-family: inherit;
