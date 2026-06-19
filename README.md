@@ -17,9 +17,9 @@
 <br/>
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-care--shift--nu.vercel.app-0ea5e9?style=for-the-badge&logo=vercel&logoColor=white)](https://care-shift-nu.vercel.app)
-![HTML](https://img.shields.io/badge/HTML-40.2%25-e34f26?style=for-the-badge&logo=html5&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 ![JavaScript](https://img.shields.io/badge/JavaScript-33.9%25-f7df1e?style=for-the-badge&logo=javascript&logoColor=black)
-![CSS](https://img.shields.io/badge/CSS-25.9%25-264de4?style=for-the-badge&logo=css3&logoColor=white)
 
 </div>
 
@@ -60,11 +60,11 @@ CareShift's core experience is split into 8 sequential, interactive sections:
 
 - **Cinematic UI** — Noise-texture SVG overlay, ambient orbs, GSAP scroll animations, and Three.js 3D canvas background
 - **Custom Cursor** — Smooth dot + ring cursor with interactive states
-- **Dark / Light Mode** — Theme persists across page transitions via `theme.js`
+- **Dark / Light Mode** — Theme persists across page transitions via Context API
 - **Fully Anonymous** — No data is stored, no login required
 - **India-First Resources** — Helplines include Tele-MANAS (14416), KIRAN (1800-599-0019), PM-JAY (14555), National Health Line (104), and Emergency (108)
 - **Responsive Design** — Adapts to mobile and desktop viewports
-- **Smooth Page Transitions** — Cinematic entrance/exit overlays between landing and journey
+- **Smooth Page Transitions** — Cinematic entrance/exit overlays between landing and journey powered by React Router
 
 ---
 
@@ -72,9 +72,10 @@ CareShift's core experience is split into 8 sequential, interactive sections:
 
 | Layer | Technology |
 |-------|-----------|
-| Structure | HTML5 |
+| Structure | React.js |
+| Framework | Vite |
 | Styling | CSS3 (custom properties, glassmorphism, CSS animations) |
-| Interactivity | Vanilla JavaScript |
+| Interactivity | React Hooks (useState, useEffect, useRef) |
 | Animations | [GSAP 3.12](https://greensock.com/gsap/) + ScrollTrigger |
 | 3D Background | [Three.js r128](https://threejs.org/) |
 | Fonts | Bebas Neue, Inter, Clash Display, Plus Jakarta Sans, Outfit |
@@ -82,37 +83,18 @@ CareShift's core experience is split into 8 sequential, interactive sections:
 
 ---
 
-## ✦ Project Structure
-
-```
-CareShift/
-│
-├── index.html        # Landing page — hero, about, stigma, solution sections
-├── style.css         # Landing page styles (glassmorphism, scroll panels, animations)
-├── main.js           # Landing page JS (GSAP scroll triggers, Three.js scene, transitions)
-│
-├── journey.html      # The 8-slide interactive health journey (455 lines)
-├── journey.css       # Journey-specific styles (cards, chips, chat UI, masonry, meters)
-├── journey.js        # Journey interactivity (CareBot, Reality Check, Cost Slider, etc.)
-│
-├── cursor.js         # Custom cursor dot + ring logic
-└── theme.js          # Dark/light mode toggle with flash prevention
-```
-
----
-
 ## ✦ Getting Started
 
-No build tools or dependencies required. Clone and open directly:
+Clone the repository and run the development server:
 
 ```bash
 git clone https://github.com/swastiksinha1/CareShift.git
 cd CareShift
-# Open index.html in your browser
-open index.html
+npm install
+npm run dev
 ```
 
-Or simply visit the **[live deployment](https://care-shift-nu.vercel.app)**.
+Open `http://localhost:5173` in your browser.
 
 ---
 

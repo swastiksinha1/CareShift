@@ -1,102 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CareShift - Prioritize Your Health</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="theme.js"></script>
+    <link rel="preconnect" href="https://api.fontshare.com">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Prevent white flash during load */
-        html { background-color: #f8fafc; }
-        html.dark-mode { background-color: #050505; }
-        body { margin: 0; padding: 0; }
+      /* Prevent white flash during load */
+      html { background-color: #f8fafc; }
+      html.dark-mode { background-color: #050505; }
+      body { margin: 0; padding: 0; }
     </style>
-</head>
-<body>
-    <!-- Cinematic Overlays -->
-    <svg class="noise-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <filter id="noiseFilter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
-    </svg>
-    <div class="ambient-orb orb-1"></div>
-    <div class="ambient-orb orb-2"></div>
-
-    <!-- Custom Cursor -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-ring"></div>
-
-    <div id="whiteout"></div>
-    <div id="canvas-container"></div>
-    
-    <nav>
-        <div class="logo" style="display:flex; align-items:center; gap:0.5rem;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="24" height="24" rx="6" fill="var(--accent-color)" />
-                <path d="M12 7V17M7 12H17" stroke="white" stroke-width="2.5" stroke-linecap="round" />
-                <path d="M17 12L14 9M17 12L14 15" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            CareShift
-        </div>
-        <div class="nav-links">
-            <a href="#about" class="nav-link">About</a>
-            <a href="#solution" class="nav-link">Solution</a>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            </button>
-            <a href="#" onclick="startJourney(event)" class="btn-nav">Begin Journey</a>
-        </div>
-    </nav>
-
-    <main>
-        <section id="hero" class="panel">
-            <div class="content">
-                <h1 class="stagger-text">Health is a choice.<br>Make it today.</h1>
-                <p class="stagger-text">Breaking down the emotional and psychological barriers to healthcare. No jargon, no stigma—just simple steps to a better you.</p>
-                <div class="cta-group stagger-text">
-                    <a href="#about" class="btn-primary">Learn More<span class="arrow">&rarr;</span></a>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="panel right-align">
-            <div class="content">
-                <h2 class="slide-up">The Fear of Diagnosis</h2>
-                <p class="slide-up">We often avoid tests because we're afraid of the answers. But knowing early is your biggest advantage. Let's shift the perspective.</p>
-            </div>
-        </section>
-
-        <section id="stigma" class="panel">
-            <div class="content">
-                <h2 class="slide-up">Breaking the Stigma</h2>
-                <p class="slide-up">It's time to stop letting society dictate your health. Your well-being comes before anyone else's opinions or assumptions.</p>
-            </div>
-        </section>
-
-        <section id="solution" class="panel right-align">
-            <div class="content">
-                <h2 class="slide-up">The CareShift Solution</h2>
-                <p class="slide-up">A guided path to overcoming your hesitation. We build trust, provide comfort, and help you take actionable steps without feeling overwhelmed.</p>
-            </div>
-        </section>
-        
-        <section id="contact" class="panel centered">
-            <div class="content box transition-box">
-                <h2 class="slide-up">Ready to take control?</h2>
-                <p class="slide-up">Step into our immersive diagnostic journey. It's fully anonymous and built just for you.</p>
-                <button class="btn-primary slide-up mt-2" onclick="startJourney(event)">Begin the Journey</button>
-            </div>
-        </section>
-    </main>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="cursor.js"></script>
-    <script src="main.js"></script>
-</body>
+    <script>
+      // Run immediately before page paint to prevent flash
+      (function() {
+        var savedTheme = localStorage.getItem('careshift-theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark-mode');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
